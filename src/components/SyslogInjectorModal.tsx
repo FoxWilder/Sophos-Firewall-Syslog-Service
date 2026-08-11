@@ -15,9 +15,12 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
 }) => {
   const [host, setHost] = useState("FW-HQ-01");
   const [ip, setIp] = useState("10.24.1.12");
+  const [userName, setUserName] = useState("faithmobiel");
+  const [domain, setDomain] = useState("flowgpt.com");
+  const [durationSeconds, setDurationSeconds] = useState(3600);
   const [facility, setFacility] = useState<Facility>("firewall");
-  const [severity, setSeverity] = useState<Severity>("Warning");
-  const [message, setMessage] = useState("Connection dropped by Web Server Protection WAF policy (SQLi attempt)");
+  const [severity, setSeverity] = useState<Severity>("Info");
+  const [message, setMessage] = useState("HTTP web session allowed by FW Rule 12 for domain flowgpt.com");
   const [injectedSuccess, setInjectedSuccess] = useState(false);
 
   if (!isOpen) return null;
@@ -47,7 +50,7 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
       logId,
       logComponent: facility.toUpperCase(),
       logSubtype: severity === "Critical" ? "Threat" : "Activity",
-      rawPayload: `<134>1 ${isoStr} ${host} SFOS 104 - - device_name="${host}" log_id="${logId}" log_type="Event" log_component="${facility}" status="${severity}" src_ip="${ip}" message="${message}"`,
+      rawPayload: `<134>1 ${isoStr} ${host} SFOS 104 - - device_name="${host}" log_id="${logId}" log_type="Event" log_component="${facility}" status="${severity}" src_ip="${ip}" user_name="${userName}" domain="${domain}" app_name="${domain}" bytes_sent="25000" bytes_received="150000" duration_seconds="${durationSeconds}" message="${message}"`,
       attributes: {
         device_name: host,
         log_id: logId,
@@ -55,6 +58,12 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
         log_component: facility,
         status: severity,
         src_ip: ip,
+        user_name: userName,
+        domain: domain,
+        app_name: domain,
+        duration_seconds: String(durationSeconds),
+        bytes_sent: "25000",
+        bytes_received: "150000",
         message,
         injected: "true"
       }
@@ -99,22 +108,34 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
         ) : (
           <form onSubmit={handleInject} className="space-y-3 text-xs">
             
-            <div className="grid gap-3 grid-cols-2">
+            <div className="grid gap-3 grid-cols-3">
               <div>
-                <label className="mb-1 block text-[10px] font-bold text-[#888888] uppercase">Host Identifier</label>
+                <label className="mb-1 block text-[10px] font-bold text-[#8ea8cb] uppercase">User Name</label>
                 <input
-                  value={host}
-                  onChange={(e) => setHost(e.target.value)}
-                  className="w-full rounded border border-[#2a2a2a] bg-[#16161a] p-2 text-xs text-white outline-none focus:border-emerald-500 font-mono"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="faithmobiel"
+                  className="w-full rounded border border-[#1f3354] bg-[#07111e] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-[10px] font-bold text-[#888888] uppercase">Source IP Address</label>
+                <label className="mb-1 block text-[10px] font-bold text-[#8ea8cb] uppercase">Target Domain</label>
                 <input
-                  value={ip}
-                  onChange={(e) => setIp(e.target.value)}
-                  className="w-full rounded border border-[#2a2a2a] bg-[#16161a] p-2 text-xs text-white outline-none focus:border-emerald-500 font-mono"
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value)}
+                  placeholder="flowgpt.com"
+                  className="w-full rounded border border-[#1f3354] bg-[#07111e] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-[10px] font-bold text-[#8ea8cb] uppercase">Duration (Secs)</label>
+                <input
+                  type="number"
+                  value={durationSeconds}
+                  onChange={(e) => setDurationSeconds(Number(e.target.value))}
+                  className="w-full rounded border border-[#1f3354] bg-[#07111e] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 />
               </div>
             </div>

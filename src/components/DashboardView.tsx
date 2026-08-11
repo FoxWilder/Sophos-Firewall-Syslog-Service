@@ -126,10 +126,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Card 1: Listener Health */}
-        <div className="relative overflow-hidden rounded border border-[#2a2a2a] bg-[#111113] p-3.5">
+        <div className="relative overflow-hidden rounded border border-[#1f3354] bg-[#0b192c] p-3.5 shadow-md">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-[#666666]">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#8ea8cb]">
                 LISTENER_HEALTH
               </p>
               <div className="mt-2 flex items-center gap-2">
@@ -137,40 +137,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <span className="text-sm font-bold text-white tracking-tight">ACTIVE_OK</span>
               </div>
             </div>
-            <Activity className="text-emerald-500" size={18} />
+            <Activity className="text-[#00a3e0]" size={20} />
           </div>
-          <p className="mt-2.5 text-[10px] text-[#888888]">
+          <p className="mt-2.5 text-[11px] text-[#a2bdde]">
             UDP:{settings.udpPort} | TCP:{settings.tcpPort} ACTIVE
           </p>
-          <div className="mt-2 flex items-center gap-1.5 text-[10px] text-emerald-400/80">
+          <div className="mt-2 flex items-center gap-1.5 text-[10px] text-[#00a3e0]">
             <Clock3 size={12} /> BIND: {settings.bindAddress}
           </div>
         </div>
 
         {/* Card 2: Received Volume */}
-        <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5">
+        <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5 shadow-md">
           <div className="flex items-center justify-between">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-[#666666]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#8ea8cb]">
               PROCESSED_EVENTS
             </p>
-            <Terminal size={16} className="text-[#888888]" />
+            <Terminal size={18} className="text-[#00a3e0]" />
           </div>
           <div className="mt-2 flex items-baseline justify-between">
             <p className="text-2xl font-bold font-mono tracking-tight text-white">
               {(totalEventCount * 184).toLocaleString()}
             </p>
-            <span className="rounded bg-emerald-950/50 border border-emerald-800/40 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400">
-              +12.8%
+            <span className="rounded bg-[#0066cc]/30 border border-[#00a3e0]/50 px-2 py-0.5 text-[10px] font-bold text-[#00a3e0]">
+              LIVE SQLITE
             </span>
           </div>
-          <p className="mt-1 text-[10px] text-[#666666]">BUFF_LIMIT: 500 lines</p>
+          <p className="mt-1 text-[10px] text-[#8ea8cb]">SQLITE TABLE: syslog_events</p>
           
           {/* Sparkline */}
           <div className="mt-2 flex h-5 items-end gap-0.5">
             {[35, 52, 41, 64, 48, 72, 60, 85, 68, 92, 75, 100].map((height, i) => (
               <span
                 key={i}
-                className="flex-1 bg-emerald-500/60"
+                className="flex-1 bg-[#0066cc]"
                 style={{ height: `${height}%` }}
               />
             ))}
@@ -178,41 +178,41 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Card 3: Collector Identity */}
-        <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5">
+        <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5 shadow-md">
           <div className="flex items-center justify-between">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-[#666666]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#8ea8cb]">
               COLLECTOR_ID
             </p>
-            <Server size={16} className="text-[#888888]" />
+            <Server size={18} className="text-[#00a3e0]" />
           </div>
           <p className="mt-2 text-sm font-bold text-white truncate">
             {settings.collectorName}
           </p>
-          <p className="mt-0.5 text-[10px] text-[#666666]">WIN_SERVER_2022</p>
-          <div className="mt-2.5 flex items-center gap-1.5 rounded bg-[#0a0a0c] border border-[#222226] p-1.5 text-[10px] text-[#888888]">
-            <Database size={12} className="text-emerald-500 shrink-0" />
-            <span className="truncate font-mono">{settings.logDirectory}syslog.jsonl</span>
+          <p className="mt-0.5 text-[10px] text-[#8ea8cb]">SOPHOS SFOS ENGINE</p>
+          <div className="mt-2.5 flex items-center gap-1.5 rounded bg-[#07111e] border border-[#1f3354] p-1.5 text-[10px] text-[#a2bdde]">
+            <Database size={12} className="text-[#00a3e0] shrink-0" />
+            <span className="truncate font-mono">data/syslog_events.sqlite</span>
           </div>
         </div>
 
         {/* Card 4: Threat Alerts */}
-        <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5">
+        <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5 shadow-md">
           <div className="flex items-center justify-between">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-[#666666]">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#8ea8cb]">
               THREAT_ALERTS
             </p>
-            <CircleAlert size={16} className="text-[#ef4444]" />
+            <CircleAlert size={18} className="text-[#ef4444]" />
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <p className="text-2xl font-bold font-mono text-[#ef4444]">
               {criticalCount}
             </p>
-            <span className="text-[10px] text-[#888888]">ERRORS/CRIT</span>
+            <span className="text-[10px] text-[#8ea8cb]">ERRORS/CRIT</span>
           </div>
-          <p className="mt-0.5 text-[10px] text-[#666666]">ATP & IPS Security Events</p>
+          <p className="mt-0.5 text-[10px] text-[#8ea8cb]">ATP & IPS Security Events</p>
           <button
             onClick={() => onOpenExplorerWithFilter("Critical")}
-            className="mt-2.5 w-full rounded border border-red-800/40 bg-red-950/30 py-1 text-[10px] font-bold uppercase tracking-wider text-red-400 hover:bg-red-950/60"
+            className="mt-2.5 w-full rounded border border-red-800/40 bg-red-950/30 py-1 text-[10px] font-bold uppercase tracking-wider text-red-400 hover:bg-red-950/60 transition"
           >
             INSPECT_ERRORS
           </button>

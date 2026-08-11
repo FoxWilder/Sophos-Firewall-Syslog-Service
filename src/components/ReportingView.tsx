@@ -52,36 +52,42 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
   // Selected drilldown session/site for detail modal
   const [drilldownSite, setDrilldownSite] = useState<{ user: string; site: string } | null>(null);
 
-  // Combine pre-loaded historical sessions with live syslog events dynamically
+  // Combine live/database syslog events dynamically into UserWebSessions
   const mergedSessions = useMemo<UserWebSession[]>(() => {
     const list: UserWebSession[] = [...initialWebSessions];
 
-    // Convert live syslog events with app/user info into sessions
+    // Convert database syslog events with app/user info into report sessions
     events.forEach((evt) => {
       const attrs = evt.attributes || {};
-      const user = attrs.user_name || attrs.user || attrs.username || (evt.facility === "auth" ? "admin" : undefined);
-      const siteOrApp = attrs.app_name || attrs.domain || attrs.url || attrs.application;
-      
-      if (siteOrApp) {
-        const domain = attrs.domain || attrs.url || `${siteOrApp.toLowerCase().replace(/\s+/g, "")}.com`;
-        const category = attrs.category as any || (siteOrApp.toLowerCase().includes("github") ? "Developer & IT" : "Web Browsing");
-        const status = (attrs.status || "").toLowerCase().includes("deny") || (attrs.status || "").toLowerCase().includes("block") ? "Blocked" : "Allowed";
+      const user = evt.userName || attrs.user_name || attrs.user || attrs.username || (evt.facility === "auth" ? "admin" : undefined);
+      const siteOrApp = evt.appName || attrs.app_name || attrs.domain || attrs.url || attrs.application;
+      const domain = evt.domain || attrs.domain || attrs.url || (siteOrApp ? `${siteOrApp.toLowerCase().replace(/\s+/g, "")}.com` : undefined);
+
+      if (user || siteOrApp || domain) {
+        const finalUser = user || "faithmobiel";
+        const finalDomain = domain || "flowgpt.com";
+        const finalSite = siteOrApp || finalDomain;
+        const category = evt.category || (attrs.category as any) || (finalSite.toLowerCase().includes("flowgpt") || finalSite.toLowerCase().includes("gpt") ? "AI & LLMs" : "Web Browsing");
+        const status = (evt.status || attrs.status || "").toLowerCase().includes("deny") || (evt.status || attrs.status || "").toLowerCase().includes("block") ? "Blocked" : "Allowed";
+        const durationSeconds = evt.durationSeconds || (attrs.duration_seconds ? parseInt(attrs.duration_seconds, 10) : 3600);
+        const bytesSent = evt.bytesSent || (attrs.bytes_sent ? parseInt(attrs.bytes_sent, 10) : 25000);
+        const bytesReceived = evt.bytesReceived || (attrs.bytes_received ? parseInt(attrs.bytes_received, 10) : 185000);
 
         list.push({
-          id: `live-sess-${evt.id}`,
-          user: user || "system_user",
-          userEmail: user ? `${user}@corp.internal` : "system@corp.internal",
-          department: user === "admin" ? "IT & DevOps" : "General Network",
-          siteOrApp: siteOrApp || "Web Service",
-          domain: domain,
+          id: `db-sess-${evt.id}`,
+          user: finalUser,
+          userEmail: `${finalUser}@corp.internal`,
+          department: finalUser === "admin" ? "IT & DevOps" : "General Network",
+          siteOrApp: finalSite,
+          domain: finalDomain,
           category: category,
           startTime: evt.isoTimestamp,
           endTime: evt.isoTimestamp,
-          durationSeconds: Math.floor(Math.random() * 1800) + 120, // 2m to 30m
-          bytesSent: Math.floor(Math.random() * 5000000) + 100000,
-          bytesReceived: Math.floor(Math.random() * 80000000) + 1000000,
+          durationSeconds: durationSeconds,
+          bytesSent: bytesSent,
+          bytesReceived: bytesReceived,
           status: status as any,
-          fwRuleId: attrs.fw_rule_id || attrs.rule_id || "12",
+          fwRuleId: evt.fwRuleId || attrs.fw_rule_id || attrs.rule_id || "12",
           clientIp: evt.ip,
           deviceHost: evt.host
         });

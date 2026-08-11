@@ -57,30 +57,30 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="mb-4 rounded border border-[#2a2a2a] bg-[#111113] p-3 sm:p-4 font-mono select-none">
+    <header className="mb-4 rounded border border-[#1f3354] bg-[#0b192c] p-3 sm:p-4 font-mono select-none shadow-lg">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         
         {/* Brand & Collector Identity */}
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-[#16161a] border border-[#2a2a2a] text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
-            <ShieldCheck size={20} />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#0066cc] text-white shadow-[0_0_12px_rgba(0,102,204,0.4)]">
+            <ShieldCheck size={22} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${streamMode === 'live' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse' : 'bg-amber-400'}`}></div>
-              <h1 className="text-white font-bold text-sm tracking-tighter uppercase flex items-center gap-2">
-                Sophos Firewall Syslog Service
+              <div className={`h-2.5 w-2.5 rounded-full ${streamMode === 'live' ? 'bg-[#00a3e0] shadow-[0_0_8px_rgba(0,163,224,0.8)] animate-pulse' : 'bg-amber-400'}`}></div>
+              <h1 className="text-white font-bold text-base tracking-tight uppercase flex items-center gap-2">
+                <span className="text-[#00a3e0] font-black">SOPHOS</span> Firewall Syslog Receiver
               </h1>
-              <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded border ${
-                streamMode === 'live' 
-                  ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800/60' 
-                  : 'text-amber-300 bg-amber-950/60 border-amber-800/60'
-              }`}>
-                {streamMode === 'live' ? 'LIVE_FIREWALL' : 'DEMO_MODE'}
+              <span className="text-[10px] bg-[#0066cc]/40 border border-[#00a3e0]/60 text-[#00a3e0] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                SFOS v22.0
               </span>
             </div>
-            <p className="text-[10px] text-[#666666] mt-0.5 tracking-wide">
-              SOPHOS_SFOS :: UDP/TCP 5514 LISTENER :: REAL-TIME MONITORING
+            <p className="text-[11px] text-[#8ea8cb] mt-0.5 tracking-wide flex items-center gap-2">
+              <span>UDP/TCP 5514 LISTENER</span>
+              <span>•</span>
+              <span className="text-[#00a3e0] font-semibold">SQLITE STORAGE</span>
+              <span>•</span>
+              <span>ADMIN MONITORING</span>
             </p>
           </div>
         </div>
@@ -91,16 +91,16 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Stream Mode Toggle (Live Server vs Demo Simulation) */}
           <button
             onClick={() => setStreamMode(streamMode === "live" ? "demo" : "live")}
-            className={`flex items-center gap-1.5 rounded border px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition ${
+            className={`flex items-center gap-1.5 rounded border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition ${
               streamMode === "live"
-                ? "border-emerald-500/60 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/50"
+                ? "border-[#00a3e0]/60 bg-[#0066cc]/20 text-[#00a3e0] hover:bg-[#0066cc]/40"
                 : "border-amber-500/50 bg-amber-950/40 text-amber-300 hover:bg-amber-900/50"
             }`}
             title={streamMode === "live" ? "Receiving real firewall logs from UDP/TCP 5514. Click to switch to Demo Simulation." : "Running demo dummy logs generator. Click to switch to Live Firewall Stream."}
           >
             {streamMode === "live" ? (
               <>
-                <Radio size={12} className="text-emerald-400 animate-pulse" />
+                <Radio size={12} className="text-[#00a3e0] animate-pulse" />
                 <span>MODE: LIVE FIREWALL</span>
               </>
             ) : (
@@ -114,23 +114,23 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Pause / Resume Live Stream */}
           <button
             onClick={() => setIsStreaming((prev) => !prev)}
-            className={`flex items-center gap-2 rounded border px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition ${
+            className={`flex items-center gap-2 rounded border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition ${
               isStreaming
-                ? "border-emerald-500/50 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-950/50"
-                : "border-[#333333] bg-[#1a1a1d] text-[#888888] hover:bg-[#222226]"
+                ? "border-[#00a3e0]/50 bg-[#0b2545] text-[#00a3e0] hover:bg-[#003366]"
+                : "border-[#1f3354] bg-[#112238] text-[#8ea8cb] hover:bg-[#192b45]"
             }`}
             title={isStreaming ? "Pause real-time stream" : "Resume real-time stream"}
           >
             {isStreaming ? (
               <>
-                <Pause size={12} className="text-emerald-400" />
+                <Pause size={12} className="text-[#00a3e0]" />
                 <span className="flex items-center gap-1.5">
-                  STREAMING <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  STREAMING <span className="h-1.5 w-1.5 rounded-full bg-[#00a3e0] animate-ping" />
                 </span>
               </>
             ) : (
               <>
-                <Play size={12} className="text-[#888888]" />
+                <Play size={12} className="text-[#8ea8cb]" />
                 <span>PAUSED</span>
               </>
             )}
@@ -139,26 +139,26 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Refresh Button */}
           <button
             onClick={onRefresh}
-            className="flex items-center gap-1.5 rounded border border-[#333333] bg-[#16161a] px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase text-[#d1d1d1] hover:bg-[#222226] hover:border-[#444444]"
+            className="flex items-center gap-1.5 rounded border border-[#1f3354] bg-[#112238] px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase text-white hover:bg-[#1a2e4c] transition"
             title="Fetch latest events"
           >
-            <RefreshCw size={12} />
-            <span className="hidden sm:inline">POLL</span>
+            <RefreshCw size={12} className="text-[#00a3e0]" />
+            <span className="hidden sm:inline">POLL DB</span>
           </button>
 
           {/* Inject Test Packet */}
           <button
             onClick={onOpenInjector}
-            className="flex items-center gap-1.5 rounded border border-[#333333] bg-[#222226] hover:bg-[#333338] text-white px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase"
+            className="flex items-center gap-1.5 rounded border border-[#0066cc] bg-[#0066cc] hover:bg-[#0052a3] text-white px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase shadow-md transition"
           >
-            <Send size={12} className="text-emerald-400" />
+            <Send size={12} />
             <span>TEST_LOG</span>
           </button>
 
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded border border-[#2a2a2a] bg-[#16161a] p-1.5 text-[#888888] lg:hidden"
+            className="rounded border border-[#1f3354] bg-[#112238] p-1.5 text-[#8ea8cb] lg:hidden"
             aria-label="Toggle Navigation"
           >
             {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
@@ -167,8 +167,8 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Navigation Tabs (Desktop) */}
-      <nav className="mt-3 hidden border-t border-[#2a2a2a] pt-2 lg:flex lg:items-center lg:justify-between">
-        <div className="flex items-center gap-1">
+      <nav className="mt-3 hidden border-t border-[#1f3354] pt-2.5 lg:flex lg:items-center lg:justify-between">
+        <div className="flex items-center gap-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -176,20 +176,20 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 rounded border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition ${
+                className={`flex items-center gap-2 rounded border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
                   isActive
-                    ? "border-emerald-500/60 bg-[#1c1c1f] text-white shadow-[0_0_8px_rgba(16,185,129,0.15)]"
-                    : "border-transparent text-[#888888] hover:bg-[#1c1c1f] hover:text-white"
+                    ? "border-[#00a3e0] bg-[#0066cc] text-white shadow-[0_0_10px_rgba(0,102,204,0.5)]"
+                    : "border-transparent text-[#a2bdde] hover:bg-[#13253f] hover:text-white"
                 }`}
               >
-                <Icon size={13} className={isActive ? "text-emerald-400" : "text-[#666]"} />
+                <Icon size={14} className={isActive ? "text-white" : "text-[#00a3e0]"} />
                 <span>{item.label}</span>
                 {item.badge && (
                   <span
                     className={`rounded px-1.5 py-0.2 text-[9px] font-mono ${
                       isActive
-                        ? "bg-emerald-950 text-emerald-400 border border-emerald-800/50"
-                        : "bg-[#1f1f23] text-[#666666]"
+                        ? "bg-[#0b192c] text-[#00a3e0] font-bold"
+                        : "bg-[#172b47] text-[#8ea8cb]"
                     }`}
                   >
                     {item.badge}
@@ -201,9 +201,9 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* System Host Badge */}
-        <div className="flex items-center gap-2 rounded border border-[#2a2a2a] bg-[#0d0d0f] px-2.5 py-1 text-[10px] text-[#666666]">
-          <Server size={12} className={streamMode === "live" ? "text-emerald-500" : "text-amber-400"} />
-          <span>RECEIVER: {streamMode === "live" ? "LIVE UDP/TCP 5514" : "DEMO GENERATOR"}</span>
+        <div className="flex items-center gap-2 rounded border border-[#1f3354] bg-[#07111e] px-3 py-1 text-[10px] text-[#8ea8cb]">
+          <Server size={12} className={streamMode === "live" ? "text-[#00a3e0]" : "text-amber-400"} />
+          <span>SOPHOS SFOS STORAGE: <strong className="text-white">SQLITE DB</strong></span>
         </div>
       </nav>
 

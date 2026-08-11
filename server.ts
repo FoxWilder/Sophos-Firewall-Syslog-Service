@@ -3,6 +3,13 @@ import path from "path";
 import dgram from "dgram";
 import net from "net";
 import { createServer as createViteServer } from "vite";
+import {
+  getDb,
+  insertSyslogEvent,
+  getAllSyslogEvents,
+  clearAllSyslogEvents,
+  queryReportingData
+} from "./src/db/database";
 
 interface SyslogEvent {
   id: string;
@@ -28,7 +35,7 @@ const PORT = 3000;
 const SYSLOG_UDP_PORT = parseInt(process.env.SYSLOG_UDP_PORT || "5514", 10);
 const SYSLOG_TCP_PORT = parseInt(process.env.SYSLOG_TCP_PORT || "5514", 10);
 
-// In-memory event buffer and active SSE client subscribers
+// In-memory event buffer for instant broadcast and active SSE client subscribers
 const eventBuffer: SyslogEvent[] = [];
 const sseClients = new Set<Response>();
 let totalPacketsReceived = 0;
@@ -137,12 +144,19 @@ function parseSyslogMessage(rawMessage: string, sourceIp: string, transport: 'ud
   };
 }
 
-// Add event to buffer and push to all SSE connected clients
-function broadcastEvent(evt: SyslogEvent) {
+// Add event to buffer, insert into SQLite, and push to all SSE connected clients
+async function broadcastEvent(evt: SyslogEvent) {
   totalPacketsReceived++;
   eventBuffer.unshift(evt);
   if (eventBuffer.length > 500) {
     eventBuffer.pop();
+  }
+
+  // Insert asynchronously into SQLite DB
+  try {
+    await insertSyslogEvent(evt);
+  } catch (err) {
+    console.error("[SQLite Insert Error]", err);
   }
 
   const payload = `data: ${JSON.stringify(evt)}\n\n`;
@@ -156,6 +170,14 @@ function broadcastEvent(evt: SyslogEvent) {
 }
 
 async function startServer() {
+  // Initialize SQLite Database
+  try {
+    await getDb();
+    console.log("[SQLite DB] Initialized successfully in data/syslog_events.sqlite");
+  } catch (err) {
+    console.error("[SQLite Init Error]", err);
+  }
+
   const app = express();
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -163,35 +185,84 @@ async function startServer() {
   // --- API Endpoints ---
 
   // Health and Status
-  app.get("/api/syslog/status", (req: Request, res: Response) => {
-    res.json({
-      status: "running",
-      mode: "live",
-      udpPort: SYSLOG_UDP_PORT,
-      tcpPort: SYSLOG_TCP_PORT,
-      totalReceived: totalPacketsReceived,
-      bufferedEvents: eventBuffer.length,
-      activeSseClients: sseClients.size
-    });
+  app.get("/api/syslog/status", async (req: Request, res: Response) => {
+    try {
+      const dbEvents = await getAllSyslogEvents(1000);
+      res.json({
+        status: "running",
+        mode: "live",
+        storage: "sqlite",
+        udpPort: SYSLOG_UDP_PORT,
+        tcpPort: SYSLOG_TCP_PORT,
+        totalReceived: totalPacketsReceived,
+        bufferedEvents: dbEvents.length,
+        activeSseClients: sseClients.size
+      });
+    } catch (err) {
+      res.json({
+        status: "running",
+        mode: "live",
+        storage: "sqlite",
+        udpPort: SYSLOG_UDP_PORT,
+        tcpPort: SYSLOG_TCP_PORT,
+        totalReceived: totalPacketsReceived,
+        bufferedEvents: eventBuffer.length,
+        activeSseClients: sseClients.size
+      });
+    }
   });
 
-  // Get current event buffer
-  app.get("/api/syslog/events", (req: Request, res: Response) => {
-    res.json({
-      status: "ok",
-      count: eventBuffer.length,
-      events: eventBuffer
-    });
+  // Get current events directly from SQLite database
+  app.get("/api/syslog/events", async (req: Request, res: Response) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 500;
+      const events = await getAllSyslogEvents(limit);
+      res.json({
+        status: "ok",
+        count: events.length,
+        events: events
+      });
+    } catch (err) {
+      res.status(500).json({ status: "error", message: String(err) });
+    }
   });
 
-  // Clear log buffer
-  app.post("/api/syslog/clear", (req: Request, res: Response) => {
-    eventBuffer.length = 0;
-    res.json({ status: "ok", message: "Event buffer cleared" });
+  // Query User Web Session Reporting from SQLite database
+  app.get("/api/syslog/reporting", async (req: Request, res: Response) => {
+    try {
+      const userName = (req.query.userName || req.query.user) as string;
+      const domain = (req.query.domain || req.query.site) as string;
+      const category = req.query.category as string;
+
+      const records = await queryReportingData({
+        userName,
+        domain,
+        category
+      });
+
+      res.json({
+        status: "ok",
+        count: records.length,
+        records: records
+      });
+    } catch (err) {
+      res.status(500).json({ status: "error", message: String(err) });
+    }
+  });
+
+  // Clear log database
+  app.post("/api/syslog/clear", async (req: Request, res: Response) => {
+    try {
+      eventBuffer.length = 0;
+      await clearAllSyslogEvents();
+      res.json({ status: "ok", message: "SQLite database and event buffer cleared" });
+    } catch (err) {
+      res.status(500).json({ status: "error", message: String(err) });
+    }
   });
 
   // HTTP Ingestion Endpoint (from Python receiver or external webhooks)
-  app.post("/api/syslog/ingest", (req: Request, res: Response) => {
+  app.post("/api/syslog/ingest", async (req: Request, res: Response) => {
     try {
       const { rawPayload, raw_payload, source_ip, ip, message, attributes } = req.body;
       const raw = rawPayload || raw_payload || message || JSON.stringify(req.body);
@@ -206,7 +277,7 @@ async function startServer() {
         evt = parseSyslogMessage(raw, clientIp, 'http');
       }
 
-      broadcastEvent(evt);
+      await broadcastEvent(evt);
       res.json({ status: "success", id: evt.id });
     } catch (err) {
       res.status(400).json({ status: "error", message: String(err) });

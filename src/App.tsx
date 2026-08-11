@@ -55,19 +55,17 @@ export default function App() {
     }
   }, [streamMode]);
 
-  // Events stream persistence with strict ID deduplication
+  // Events state initialized clean from SQLite API
   const [events, setEvents] = useState<SyslogEvent[]>(() => {
+    if (streamMode === "live") {
+      return [];
+    }
     try {
       const saved = localStorage.getItem("syslog_receiver_events");
-      const list: SyslogEvent[] = saved ? JSON.parse(saved) : initialEvents;
-      const seen = new Set<string>();
-      return list.filter((evt) => {
-        if (!evt.id || seen.has(evt.id)) return false;
-        seen.add(evt.id);
-        return true;
-      });
+      const list: SyslogEvent[] = saved ? JSON.parse(saved) : [];
+      return list;
     } catch {
-      return initialEvents;
+      return [];
     }
   });
 
