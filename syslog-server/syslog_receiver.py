@@ -7,11 +7,15 @@ import re
 import argparse
 from datetime import datetime
 
+import urllib.request
+import urllib.error
+
 # Default configuration
 HOST = '0.0.0.0'
 UDP_PORT = 5514
 TCP_PORT = 5514
 LOG_DIR = './logs'
+WEB_INGEST_URL = 'http://127.0.0.1:3000/api/syslog/ingest'
 
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE = os.path.join(LOG_DIR, 'sophos_syslog.log')
@@ -28,7 +32,22 @@ def parse_sophos_kv(raw_msg):
         attributes[key] = val
     return attributes
 
-def process_syslog_payload(data, addr, protocol):
+def forward_to_web_dashboard(log_entry, web_url):
+    if not web_url:
+        return
+    try:
+        data = json.dumps(log_entry).encode('utf-8')
+        req = urllib.request.Request(
+            web_url, 
+            data=data, 
+            headers={'Content-Type': 'application/json'}
+        )
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            pass
+    except Exception:
+        pass # Non-blocking if web interface is not active
+
+def process_syslog_payload(data, addr, protocol, web_url=WEB_INGEST_URL):
     try:
         message = data.decode('utf-8', errors='replace').strip()
     except Exception as e:
@@ -51,6 +70,8 @@ def process_syslog_payload(data, addr, protocol):
     
     with open(LOG_FILE, 'a', encoding='utf-8') as f:
         f.write(log_line)
+
+    forward_to_web_dashboard(log_entry, web_url)
 
 def run_server(bind_ip, udp_port, tcp_port):
     udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

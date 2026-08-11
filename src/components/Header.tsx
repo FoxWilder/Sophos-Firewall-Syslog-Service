@@ -12,7 +12,9 @@ import {
   RefreshCw,
   Menu,
   X,
-  Server
+  Server,
+  Radio,
+  Zap
 } from "lucide-react";
 
 export type NavTab = "dashboard" | "explorer" | "analytics" | "settings" | "setup" | "injector";
@@ -22,6 +24,8 @@ interface HeaderProps {
   setActiveTab: (tab: NavTab) => void;
   isStreaming: boolean;
   setIsStreaming: (streaming: boolean | ((prev: boolean) => boolean)) => void;
+  streamMode: "live" | "demo";
+  setStreamMode: (mode: "live" | "demo") => void;
   eventCount: number;
   onRefresh: () => void;
   onOpenInjector: () => void;
@@ -32,6 +36,8 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   isStreaming,
   setIsStreaming,
+  streamMode,
+  setStreamMode,
   eventCount,
   onRefresh,
   onOpenInjector
@@ -57,23 +63,51 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+              <div className={`h-2 w-2 rounded-full ${streamMode === 'live' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse' : 'bg-amber-400'}`}></div>
               <h1 className="text-white font-bold text-sm tracking-tighter uppercase flex items-center gap-2">
-                SYSLOG_EXPLORER v2.4
+                Sophos Firewall Syslog Service
               </h1>
-              <span className="text-[9px] uppercase font-bold text-emerald-500/80 bg-emerald-950/40 border border-emerald-800/40 px-1.5 py-0.5 rounded">
-                LIVE_SYS
+              <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded border ${
+                streamMode === 'live' 
+                  ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800/60' 
+                  : 'text-amber-300 bg-amber-950/60 border-amber-800/60'
+              }`}>
+                {streamMode === 'live' ? 'LIVE_FIREWALL' : 'DEMO_MODE'}
               </span>
             </div>
             <p className="text-[10px] text-[#666666] mt-0.5 tracking-wide">
-              SOPHOS_SFOS :: WIN11_COLLECTOR :: UDP/TCP/TLS 5514
+              SOPHOS_SFOS :: UDP/TCP 5514 LISTENER :: REAL-TIME MONITORING
             </p>
           </div>
         </div>
 
         {/* Global Controls & Actions */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Live Stream Toggle */}
+          
+          {/* Stream Mode Toggle (Live Server vs Demo Simulation) */}
+          <button
+            onClick={() => setStreamMode(streamMode === "live" ? "demo" : "live")}
+            className={`flex items-center gap-1.5 rounded border px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition ${
+              streamMode === "live"
+                ? "border-emerald-500/60 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/50"
+                : "border-amber-500/50 bg-amber-950/40 text-amber-300 hover:bg-amber-900/50"
+            }`}
+            title={streamMode === "live" ? "Receiving real firewall logs from UDP/TCP 5514. Click to switch to Demo Simulation." : "Running demo dummy logs generator. Click to switch to Live Firewall Stream."}
+          >
+            {streamMode === "live" ? (
+              <>
+                <Radio size={12} className="text-emerald-400 animate-pulse" />
+                <span>MODE: LIVE FIREWALL</span>
+              </>
+            ) : (
+              <>
+                <Zap size={12} className="text-amber-300" />
+                <span>MODE: DEMO SIMULATION</span>
+              </>
+            )}
+          </button>
+
+          {/* Pause / Resume Live Stream */}
           <button
             onClick={() => setIsStreaming((prev) => !prev)}
             className={`flex items-center gap-2 rounded border px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition ${
@@ -81,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? "border-emerald-500/50 bg-emerald-950/30 text-emerald-400 hover:bg-emerald-950/50"
                 : "border-[#333333] bg-[#1a1a1d] text-[#888888] hover:bg-[#222226]"
             }`}
-            title={isStreaming ? "Pause real-time syslog stream" : "Resume real-time syslog stream"}
+            title={isStreaming ? "Pause real-time stream" : "Resume real-time stream"}
           >
             {isStreaming ? (
               <>
@@ -102,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onRefresh}
             className="flex items-center gap-1.5 rounded border border-[#333333] bg-[#16161a] px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase text-[#d1d1d1] hover:bg-[#222226] hover:border-[#444444]"
-            title="Refresh dashboard view"
+            title="Fetch latest events"
           >
             <RefreshCw size={12} />
             <span className="hidden sm:inline">POLL</span>
@@ -164,8 +198,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* System Host Badge */}
         <div className="flex items-center gap-2 rounded border border-[#2a2a2a] bg-[#0d0d0f] px-2.5 py-1 text-[10px] text-[#666666]">
-          <Server size={12} className="text-emerald-500" />
-          <span>HOST: WIN-COLLECTOR-01 :5514</span>
+          <Server size={12} className={streamMode === "live" ? "text-emerald-500" : "text-amber-400"} />
+          <span>RECEIVER: {streamMode === "live" ? "LIVE UDP/TCP 5514" : "DEMO GENERATOR"}</span>
         </div>
       </nav>
 

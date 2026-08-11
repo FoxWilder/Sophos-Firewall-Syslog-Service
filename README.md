@@ -53,6 +53,7 @@ Sophos-Firewall-Syslog-Service/
 ├── CHANGELOG.md                  # Version release history
 ├── RELEASE.md                    # Release v1.0.0 detailed documentation
 ├── README.md                     # Repository overview & setup instructions
+├── server.ts                     # Express full-stack server with UDP/TCP 5514 sockets & SSE live stream
 ├── index.html                    # Single Page Application entry point
 ├── package.json                  # Dependencies & npm scripts
 ├── tsconfig.json                 # TypeScript compiler configuration

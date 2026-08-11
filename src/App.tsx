@@ -25,7 +25,15 @@ import { CircleAlert, X } from "lucide-react";
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>("dashboard");
   const [isStreaming, setIsStreaming] = useState<boolean>(true);
-  
+  const [streamMode, setStreamMode] = useState<"live" | "demo">(() => {
+    try {
+      const saved = localStorage.getItem("syslog_receiver_stream_mode");
+      return (saved === "live" || saved === "demo") ? saved : "live";
+    } catch {
+      return "live";
+    }
+  });
+
   // Settings persistence
   const [settings, setSettings] = useState<ReceiverSettings>(() => {
     try {
@@ -35,6 +43,15 @@ export default function App() {
       return defaultSettings;
     }
   });
+
+  // Save stream mode helper
+  useEffect(() => {
+    try {
+      localStorage.setItem("syslog_receiver_stream_mode", streamMode);
+    } catch (err) {
+      console.error("Failed to save stream mode", err);
+    }
+  }, [streamMode]);
 
   // Events stream persistence with strict ID deduplication
   const [events, setEvents] = useState<SyslogEvent[]>(() => {
@@ -140,9 +157,48 @@ export default function App() {
     }
   }, []);
 
-  // Live simulation loop
+  // Real-time Live Server Connection (SSE Stream for Real Firewall Traffic)
   useEffect(() => {
-    if (!isStreaming) return;
+    if (streamMode !== "live" || !isStreaming) return;
+
+    // Fetch initial event buffer from server on connect
+    fetch("/api/syslog/events")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && Array.isArray(data.events) && data.events.length > 0) {
+          data.events.forEach((evt: SyslogEvent) => addSyslogEvent(evt));
+        }
+      })
+      .catch((err) => {
+        console.warn("API server fetch notice:", err);
+      });
+
+    // Connect to SSE stream
+    const eventSource = new EventSource("/api/syslog/stream");
+
+    eventSource.onmessage = (e) => {
+      try {
+        const parsed = JSON.parse(e.data);
+        if (parsed && parsed.id && parsed.host) {
+          addSyslogEvent(parsed as SyslogEvent);
+        }
+      } catch (err) {
+        // ignore non-JSON heartbeat
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.warn("Live SSE stream notice:", err);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [streamMode, isStreaming, addSyslogEvent]);
+
+  // Demo simulation loop (Active ONLY in Demo Mode)
+  useEffect(() => {
+    if (streamMode !== "demo" || !isStreaming) return;
 
     const interval = setInterval(() => {
       setEventSeq((seq) => {
@@ -154,7 +210,7 @@ export default function App() {
     }, settings.streamRateMs || 3000);
 
     return () => clearInterval(interval);
-  }, [isStreaming, settings.streamRateMs, addSyslogEvent]);
+  }, [streamMode, isStreaming, settings.streamRateMs, addSyslogEvent]);
 
   // Quick filter jump helpers
   const handleOpenExplorerWithFilter = (severity?: Severity, facility?: string) => {
@@ -213,11 +269,24 @@ export default function App() {
           setActiveTab={setActiveTab}
           isStreaming={isStreaming}
           setIsStreaming={setIsStreaming}
+          streamMode={streamMode}
+          setStreamMode={setStreamMode}
           eventCount={events.length}
           onRefresh={() => {
-            const newEvt = generateRandomEvent(eventSeq + 1);
-            setEventSeq((s) => s + 1);
-            addSyslogEvent(newEvt);
+            if (streamMode === "live") {
+              fetch("/api/syslog/events")
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data && Array.isArray(data.events)) {
+                    data.events.forEach((evt: SyslogEvent) => addSyslogEvent(evt));
+                  }
+                })
+                .catch((err) => console.warn(err));
+            } else {
+              const newEvt = generateRandomEvent(eventSeq + 1);
+              setEventSeq((s) => s + 1);
+              addSyslogEvent(newEvt);
+            }
           }}
           onOpenInjector={() => setIsInjectorOpen(true)}
         />
