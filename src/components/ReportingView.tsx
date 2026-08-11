@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { SyslogEvent, UserWebSession, ReportFilterState } from "../types";
-import { initialWebSessions, formatDuration, formatBytes } from "../data/mockReportingData";
+import { initialWebSessions, formatDuration, formatBytes, calculateMergedDurationSeconds } from "../data/mockReportingData";
 import {
   Clock,
   User,
@@ -52,6 +52,35 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
   // Selected drilldown session/site for detail modal
   const [drilldownSite, setDrilldownSite] = useState<{ user: string; site: string } | null>(null);
 
+  // Calculate range timestamps for timeSpan filter
+  const { rangeStartMs, rangeEndMs } = useMemo(() => {
+    const now = new Date();
+    let startMs: number | undefined;
+    let endMs: number | undefined = now.getTime();
+
+    if (filters.timeSpan === "today") {
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      startMs = todayStart.getTime();
+      const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+      endMs = todayEnd.getTime();
+    } else if (filters.timeSpan === "24h") {
+      startMs = now.getTime() - 24 * 3600 * 1000;
+    } else if (filters.timeSpan === "7d") {
+      startMs = now.getTime() - 7 * 24 * 3600 * 1000;
+    } else if (filters.timeSpan === "30d") {
+      startMs = now.getTime() - 30 * 24 * 3600 * 1000;
+    } else if (filters.timeSpan === "custom") {
+      if (filters.customStartDate) {
+        startMs = new Date(`${filters.customStartDate}T00:00:00`).getTime();
+      }
+      if (filters.customEndDate) {
+        endMs = new Date(`${filters.customEndDate}T23:59:59.999`).getTime();
+      }
+    }
+
+    return { rangeStartMs: startMs, rangeEndMs: endMs };
+  }, [filters.timeSpan, filters.customStartDate, filters.customEndDate]);
+
   // Combine live/database syslog events dynamically into UserWebSessions
   const mergedSessions = useMemo<UserWebSession[]>(() => {
     const list: UserWebSession[] = [...initialWebSessions];
@@ -69,9 +98,16 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
         const finalSite = siteOrApp || finalDomain;
         const category = evt.category || (attrs.category as any) || (finalSite.toLowerCase().includes("flowgpt") || finalSite.toLowerCase().includes("gpt") ? "AI & LLMs" : "Web Browsing");
         const status = (evt.status || attrs.status || "").toLowerCase().includes("deny") || (evt.status || attrs.status || "").toLowerCase().includes("block") ? "Blocked" : "Allowed";
-        const durationSeconds = evt.durationSeconds || (attrs.duration_seconds ? parseInt(attrs.duration_seconds, 10) : 3600);
+        
+        let durationSeconds = evt.durationSeconds || (attrs.duration_seconds ? parseInt(attrs.duration_seconds, 10) : 120);
+        if (isNaN(durationSeconds) || durationSeconds <= 0) durationSeconds = 120;
+
         const bytesSent = evt.bytesSent || (attrs.bytes_sent ? parseInt(attrs.bytes_sent, 10) : 25000);
         const bytesReceived = evt.bytesReceived || (attrs.bytes_received ? parseInt(attrs.bytes_received, 10) : 185000);
+
+        let endMs = Date.parse(evt.isoTimestamp);
+        if (isNaN(endMs)) endMs = Date.now();
+        let startMs = endMs - (durationSeconds * 1000);
 
         list.push({
           id: `db-sess-${evt.id}`,
@@ -81,8 +117,8 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           siteOrApp: finalSite,
           domain: finalDomain,
           category: category,
-          startTime: evt.isoTimestamp,
-          endTime: evt.isoTimestamp,
+          startTime: new Date(startMs).toISOString(),
+          endTime: new Date(endMs).toISOString(),
           durationSeconds: durationSeconds,
           bytesSent: bytesSent,
           bytesReceived: bytesReceived,
@@ -123,6 +159,17 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
   // Filtered Sessions List
   const filteredSessions = useMemo(() => {
     return mergedSessions.filter((s) => {
+      // Timeframe filter check
+      const sessEndMs = Date.parse(s.endTime || s.startTime);
+      const sessStartMs = Date.parse(s.startTime);
+
+      if (rangeStartMs !== undefined && !isNaN(rangeStartMs)) {
+        if (sessEndMs < rangeStartMs) return false;
+      }
+      if (rangeEndMs !== undefined && !isNaN(rangeEndMs)) {
+        if (sessStartMs > rangeEndMs) return false;
+      }
+
       // User filter
       if (filters.user !== "all" && s.user !== filters.user) return false;
 
@@ -149,7 +196,47 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
 
       return true;
     });
-  }, [mergedSessions, filters]);
+  }, [mergedSessions, filters, rangeStartMs, rangeEndMs]);
+
+  // Global Application Aggregates across all users
+  const globalAppsList = useMemo(() => {
+    const appsMap = new Map<string, {
+      siteOrApp: string;
+      domain: string;
+      category: string;
+      bytes: number;
+      visits: number;
+      usersSet: Set<string>;
+      sessions: UserWebSession[];
+    }>();
+
+    filteredSessions.forEach((s) => {
+      const key = `${s.siteOrApp}||${s.domain}`;
+      if (!appsMap.has(key)) {
+        appsMap.set(key, {
+          siteOrApp: s.siteOrApp,
+          domain: s.domain,
+          category: s.category,
+          bytes: 0,
+          visits: 0,
+          usersSet: new Set(),
+          sessions: []
+        });
+      }
+
+      const app = appsMap.get(key)!;
+      app.bytes += (s.bytesSent + s.bytesReceived);
+      app.visits += 1;
+      app.usersSet.add(s.user);
+      app.sessions.push(s);
+    });
+
+    return Array.from(appsMap.values()).map((app) => ({
+      ...app,
+      userCount: app.usersSet.size,
+      durationSeconds: calculateMergedDurationSeconds(app.sessions, rangeStartMs, rangeEndMs)
+    }));
+  }, [filteredSessions, rangeStartMs, rangeEndMs]);
 
   // Aggregated User & Site Stats for Duration Reporting
   const userAggregates = useMemo(() => {
@@ -158,15 +245,14 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
       email?: string;
       department: string;
       clientIp: string;
-      totalDurationSeconds: number;
       totalBytes: number;
       allowedCount: number;
       blockedCount: number;
+      userSessions: UserWebSession[];
       sitesMap: Map<string, {
         siteOrApp: string;
         domain: string;
         category: string;
-        durationSeconds: number;
         bytes: number;
         visits: number;
         status: "Allowed" | "Blocked" | "Warned";
@@ -182,16 +268,16 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           email: s.userEmail,
           department: s.department,
           clientIp: s.clientIp,
-          totalDurationSeconds: 0,
           totalBytes: 0,
           allowedCount: 0,
           blockedCount: 0,
+          userSessions: [],
           sitesMap: new Map()
         });
       }
 
       const userEntry = map.get(s.user)!;
-      userEntry.totalDurationSeconds += s.durationSeconds;
+      userEntry.userSessions.push(s);
       userEntry.totalBytes += (s.bytesSent + s.bytesReceived);
       if (s.status === "Allowed") userEntry.allowedCount++;
       else userEntry.blockedCount++;
@@ -202,7 +288,6 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           siteOrApp: s.siteOrApp,
           domain: s.domain,
           category: s.category,
-          durationSeconds: 0,
           bytes: 0,
           visits: 0,
           status: s.status,
@@ -212,33 +297,45 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
       }
 
       const siteEntry = userEntry.sitesMap.get(siteKey)!;
-      siteEntry.durationSeconds += s.durationSeconds;
       siteEntry.bytes += (s.bytesSent + s.bytesReceived);
       siteEntry.visits += 1;
       siteEntry.sessions.push(s);
     });
 
-    return Array.from(map.values()).map((u) => ({
-      ...u,
-      sitesList: Array.from(u.sitesMap.values()).sort((a, b) => b.durationSeconds - a.durationSeconds)
-    })).sort((a, b) => b.totalDurationSeconds - a.totalDurationSeconds);
-  }, [filteredSessions]);
+    return Array.from(map.values()).map((u) => {
+      // Calculate non-overlapping merged duration for user
+      const totalDurationSeconds = calculateMergedDurationSeconds(u.userSessions, rangeStartMs, rangeEndMs);
+
+      // Calculate non-overlapping merged duration for each site visited by user
+      const sitesList = Array.from(u.sitesMap.values()).map((site) => ({
+        ...site,
+        durationSeconds: calculateMergedDurationSeconds(site.sessions, rangeStartMs, rangeEndMs)
+      })).sort((a, b) => b.durationSeconds - a.durationSeconds);
+
+      return {
+        ...u,
+        totalDurationSeconds,
+        sitesList
+      };
+    }).sort((a, b) => b.totalDurationSeconds - a.totalDurationSeconds);
+  }, [filteredSessions, rangeStartMs, rangeEndMs]);
 
   // Overall Global Report Metrics
   const globalMetrics = useMemo(() => {
-    let totalDuration = 0;
     let totalBytes = 0;
     let totalAllowed = 0;
     let totalBlocked = 0;
     const sitesSet = new Set<string>();
 
     filteredSessions.forEach((s) => {
-      totalDuration += s.durationSeconds;
       totalBytes += (s.bytesSent + s.bytesReceived);
       if (s.status === "Allowed") totalAllowed++;
       else totalBlocked++;
       sitesSet.add(s.domain);
     });
+
+    // Non-overlapping total duration across all filtered sessions
+    const totalDuration = calculateMergedDurationSeconds(filteredSessions, rangeStartMs, rangeEndMs);
 
     const totalCount = totalAllowed + totalBlocked;
     const complianceRate = totalCount > 0 ? ((totalAllowed / totalCount) * 100).toFixed(1) : "100.0";
@@ -252,7 +349,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
       blockedCount: totalBlocked,
       complianceRate
     };
-  }, [filteredSessions, userAggregates]);
+  }, [filteredSessions, userAggregates, rangeStartMs, rangeEndMs]);
 
   // Max duration spent on any single site across dataset for progress bar relative scaling
   const maxSiteDurationSeconds = useMemo(() => {
@@ -779,7 +876,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
                   Top Applications by Total Time Spent
                 </span>
 
-                {userAggregates.flatMap((u) => u.sitesList).slice(0, 6).map((item, idx) => (
+                {[...globalAppsList].sort((a, b) => b.durationSeconds - a.durationSeconds).slice(0, 6).map((item, idx) => (
                   <div key={idx} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-white font-bold flex items-center gap-1.5">
@@ -791,7 +888,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
                     <div className="h-1.5 w-full bg-[#222228] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-emerald-400 rounded-full"
-                        style={{ width: `${Math.min(100, (item.durationSeconds / maxSiteDurationSeconds) * 100)}%` }}
+                        style={{ width: `${Math.min(100, Math.max(5, (item.durationSeconds / (globalAppsList[0]?.durationSeconds || 1)) * 100))}%` }}
                       />
                     </div>
                   </div>
@@ -804,7 +901,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
                   Top Applications by Bandwidth Usage (MB / GB)
                 </span>
 
-                {userAggregates.flatMap((u) => u.sitesList).sort((a, b) => b.bytes - a.bytes).slice(0, 6).map((item, idx) => (
+                {[...globalAppsList].sort((a, b) => b.bytes - a.bytes).slice(0, 6).map((item, idx) => (
                   <div key={idx} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-white font-bold flex items-center gap-1.5">
