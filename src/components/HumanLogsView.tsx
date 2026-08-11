@@ -47,13 +47,13 @@ export const HumanLogsView: React.FC<HumanLogsViewProps> = ({
     return events.map((evt) => translateSophosEvent(evt));
   }, [events]);
 
-  // Extract unique hosts and components for filter dropdowns
+  // Extract unique hosts and components for filter dropdowns sorted alphabetically
   const uniqueHosts = useMemo(() => {
     const set = new Set<string>();
     events.forEach((e) => {
       if (e.host) set.add(e.host);
     });
-    return Array.from(set);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   }, [events]);
 
   const uniqueComponents = useMemo(() => {
@@ -61,7 +61,7 @@ export const HumanLogsView: React.FC<HumanLogsViewProps> = ({
     events.forEach((e) => {
       if (e.logComponent) set.add(e.logComponent);
     });
-    return Array.from(set);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   }, [events]);
 
   // Filtered List

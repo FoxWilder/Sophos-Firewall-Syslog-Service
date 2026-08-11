@@ -86,6 +86,10 @@ export default function App() {
     facility: "All facilities",
     host: "All hosts",
     logComponent: "All components",
+    userFilter: "All users",
+    categoryFilter: "All categories",
+    appFilter: "All apps",
+    statusFilter: "All statuses",
     timeRange: "all",
     ipFilter: ""
   });

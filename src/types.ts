@@ -40,6 +40,10 @@ export interface FilterState {
   facility: string;
   host: string;
   logComponent: string;
+  userFilter?: string;
+  categoryFilter?: string;
+  appFilter?: string;
+  statusFilter?: string;
   timeRange: "15m" | "1h" | "24h" | "7d" | "all" | "custom";
   customStartDate?: string;
   customEndDate?: string;

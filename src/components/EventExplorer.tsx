@@ -61,13 +61,71 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
   const [newPresetName, setNewPresetName] = useState("");
   const [newPresetDesc, setNewPresetDesc] = useState("");
 
-  // Extract unique hosts and components from current dataset for filter dropdowns
+  // Extract unique filter fields dynamically from dataset and sort alphabetically
   const uniqueHosts = useMemo(() => {
-    return Array.from(new Set(events.map((e) => e.host))).sort();
+    const set = new Set<string>();
+    events.forEach((e) => {
+      if (e.host) set.add(e.host);
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   }, [events]);
 
   const uniqueComponents = useMemo(() => {
-    return Array.from(new Set(events.map((e) => e.logComponent || e.facility))).sort();
+    const set = new Set<string>();
+    events.forEach((e) => {
+      const comp = e.logComponent || e.facility;
+      if (comp) set.add(comp);
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  }, [events]);
+
+  const uniqueUsers = useMemo(() => {
+    const set = new Set<string>();
+    events.forEach((e) => {
+      const u =
+        e.attributes.user ||
+        e.attributes.src_user ||
+        e.attributes.user_name ||
+        e.attributes.userName ||
+        e.attributes.live_user;
+      if (u && u.trim()) set.add(u.trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  }, [events]);
+
+  const uniqueCategories = useMemo(() => {
+    const set = new Set<string>();
+    events.forEach((e) => {
+      const c =
+        e.attributes.category ||
+        e.attributes.cat_name ||
+        e.attributes.catName ||
+        e.attributes.web_category;
+      if (c && c.trim()) set.add(c.trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  }, [events]);
+
+  const uniqueApps = useMemo(() => {
+    const set = new Set<string>();
+    events.forEach((e) => {
+      const a =
+        e.attributes.app_name ||
+        e.attributes.appName ||
+        e.attributes.application ||
+        e.attributes.app;
+      if (a && a.trim()) set.add(a.trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  }, [events]);
+
+  const uniqueStatuses = useMemo(() => {
+    const set = new Set<string>();
+    events.forEach((e) => {
+      const st = e.attributes.status || e.attributes.action || e.attributes.log_subtype;
+      if (st && st.trim()) set.add(st.trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   }, [events]);
 
   // Filter pipeline
@@ -76,7 +134,7 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
       // Search query
       if (activeFilter.searchQuery) {
         const q = activeFilter.searchQuery.toLowerCase();
-        const fullText = `${e.host} ${e.ip} ${e.message} ${e.facility} ${e.source} ${e.rawPayload} ${e.logComponent || ""}`.toLowerCase();
+        const fullText = `${e.host} ${e.ip} ${e.message} ${e.facility} ${e.source} ${e.rawPayload} ${e.logComponent || ""} ${JSON.stringify(e.attributes)}`.toLowerCase();
         if (!fullText.includes(q)) return false;
       }
 
@@ -98,6 +156,46 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
       // Log Component
       if (activeFilter.logComponent !== "All components" && e.logComponent !== activeFilter.logComponent && e.facility !== activeFilter.logComponent) {
         return false;
+      }
+
+      // Dynamic User Filter
+      if (activeFilter.userFilter && activeFilter.userFilter !== "All users") {
+        const u =
+          e.attributes.user ||
+          e.attributes.src_user ||
+          e.attributes.user_name ||
+          e.attributes.userName ||
+          e.attributes.live_user ||
+          "";
+        if (u.toLowerCase() !== activeFilter.userFilter.toLowerCase()) return false;
+      }
+
+      // Dynamic Category Filter
+      if (activeFilter.categoryFilter && activeFilter.categoryFilter !== "All categories") {
+        const c =
+          e.attributes.category ||
+          e.attributes.cat_name ||
+          e.attributes.catName ||
+          e.attributes.web_category ||
+          "";
+        if (c.toLowerCase() !== activeFilter.categoryFilter.toLowerCase()) return false;
+      }
+
+      // Dynamic Application Filter
+      if (activeFilter.appFilter && activeFilter.appFilter !== "All apps") {
+        const a =
+          e.attributes.app_name ||
+          e.attributes.appName ||
+          e.attributes.application ||
+          e.attributes.app ||
+          "";
+        if (a.toLowerCase() !== activeFilter.appFilter.toLowerCase()) return false;
+      }
+
+      // Dynamic Status/Action Filter
+      if (activeFilter.statusFilter && activeFilter.statusFilter !== "All statuses") {
+        const st = (e.attributes.status || e.attributes.action || e.attributes.log_subtype || "").toLowerCase();
+        if (!st.includes(activeFilter.statusFilter.toLowerCase())) return false;
       }
 
       // IP filter
@@ -254,7 +352,7 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
         </div>
 
         {/* Dropdown Attribute Filters */}
-        <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-[10px]">
+        <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 text-[10px]">
           
           {/* Severity */}
           <div className="relative">
@@ -268,7 +366,7 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
                 setActiveFilter((prev) => ({ ...prev, severity: e.target.value as Severity | "All" }));
                 setCurrentPage(1);
               }}
-              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none"
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
             >
               <option value="All">All Severity</option>
               <option value="Debug">Debug</option>
@@ -277,6 +375,78 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
               <option value="Warning">Warning</option>
               <option value="Error">Error</option>
               <option value="Critical">Critical</option>
+            </select>
+            <ChevronDown size={12} className="pointer-events-none absolute right-2 bottom-2 text-[#8ea8cb]" />
+          </div>
+
+          {/* User Filter */}
+          <div className="relative">
+            <label className="mb-1 block text-[9px] font-bold uppercase text-[#8ea8cb]">
+              User
+            </label>
+            <select
+              aria-label="Filter by User"
+              value={activeFilter.userFilter || "All users"}
+              onChange={(e) => {
+                setActiveFilter((prev) => ({ ...prev, userFilter: e.target.value }));
+                setCurrentPage(1);
+              }}
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
+            >
+              <option value="All users">All Users ({uniqueUsers.length})</option>
+              {uniqueUsers.map((u) => (
+                <option key={u} value={u}>
+                  {u}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="pointer-events-none absolute right-2 bottom-2 text-[#8ea8cb]" />
+          </div>
+
+          {/* Category Filter */}
+          <div className="relative">
+            <label className="mb-1 block text-[9px] font-bold uppercase text-[#8ea8cb]">
+              Category
+            </label>
+            <select
+              aria-label="Filter by Category"
+              value={activeFilter.categoryFilter || "All categories"}
+              onChange={(e) => {
+                setActiveFilter((prev) => ({ ...prev, categoryFilter: e.target.value }));
+                setCurrentPage(1);
+              }}
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
+            >
+              <option value="All categories">All Categories ({uniqueCategories.length})</option>
+              {uniqueCategories.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="pointer-events-none absolute right-2 bottom-2 text-[#8ea8cb]" />
+          </div>
+
+          {/* Application Filter */}
+          <div className="relative">
+            <label className="mb-1 block text-[9px] font-bold uppercase text-[#8ea8cb]">
+              Application
+            </label>
+            <select
+              aria-label="Filter by Application"
+              value={activeFilter.appFilter || "All apps"}
+              onChange={(e) => {
+                setActiveFilter((prev) => ({ ...prev, appFilter: e.target.value }));
+                setCurrentPage(1);
+              }}
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
+            >
+              <option value="All apps">All Apps ({uniqueApps.length})</option>
+              {uniqueApps.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
             </select>
             <ChevronDown size={12} className="pointer-events-none absolute right-2 bottom-2 text-[#8ea8cb]" />
           </div>
@@ -293,7 +463,7 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
                 setActiveFilter((prev) => ({ ...prev, facility: e.target.value }));
                 setCurrentPage(1);
               }}
-              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none"
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
             >
               <option value="All facilities">All Facilities</option>
               <option value="firewall">firewall</option>
@@ -322,9 +492,9 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
                 setActiveFilter((prev) => ({ ...prev, host: e.target.value }));
                 setCurrentPage(1);
               }}
-              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none"
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
             >
-              <option value="All hosts">All Hosts</option>
+              <option value="All hosts">All Hosts ({uniqueHosts.length})</option>
               {uniqueHosts.map((h) => (
                 <option key={h} value={h}>
                   {h}
@@ -334,7 +504,7 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
             <ChevronDown size={12} className="pointer-events-none absolute right-2 bottom-2 text-[#8ea8cb]" />
           </div>
 
-          {/* Component */}
+          {/* Log Component */}
           <div className="relative">
             <label className="mb-1 block text-[9px] font-bold uppercase text-[#8ea8cb]">
               Log Component
@@ -346,9 +516,9 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
                 setActiveFilter((prev) => ({ ...prev, logComponent: e.target.value }));
                 setCurrentPage(1);
               }}
-              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none"
+              className="h-7 w-full appearance-none rounded border border-[#1f3354] bg-[#050c17] px-2 pr-6 text-[10px] text-white outline-none focus:border-[#00a3e0]"
             >
-              <option value="All components">All Components</option>
+              <option value="All components">All Components ({uniqueComponents.length})</option>
               {uniqueComponents.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -463,12 +633,85 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
                   </td>
 
                   <td className="px-3 py-2 text-[#e2ebf8] font-mono text-[11px]">
-                    <p className="truncate max-w-[500px]" title={event.message}>{event.message}</p>
-                    {event.logId && (
-                      <span className="mt-0.5 inline-block text-[9px] text-[#00a3e0] font-mono">
-                        log_id={event.logId}
-                      </span>
-                    )}
+                    <p className="truncate max-w-[650px]" title={event.message}>{event.message}</p>
+                    
+                    {/* Rich Attribute Badge Strip */}
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[9px]">
+                      {event.logId && (
+                        <span className="rounded bg-[#07111e] border border-[#1f3354] px-1.5 py-0.5 font-mono text-[#00a3e0]">
+                          log_id={event.logId}
+                        </span>
+                      )}
+
+                      {/* User Badge */}
+                      {(event.attributes.user || event.attributes.user_name || event.attributes.src_user) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const u = event.attributes.user || event.attributes.user_name || event.attributes.src_user;
+                            setActiveFilter((prev) => ({ ...prev, userFilter: u }));
+                          }}
+                          className="rounded bg-[#0066cc]/20 border border-[#00a3e0]/40 px-1.5 py-0.5 font-bold text-[#00a3e0] hover:bg-[#0066cc]/40"
+                          title="Click to filter by user"
+                        >
+                          👤 {event.attributes.user || event.attributes.user_name || event.attributes.src_user}
+                        </button>
+                      )}
+
+                      {/* App Badge */}
+                      {(event.attributes.app_name || event.attributes.appName || event.attributes.application) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const a = event.attributes.app_name || event.attributes.appName || event.attributes.application;
+                            setActiveFilter((prev) => ({ ...prev, appFilter: a }));
+                          }}
+                          className="rounded bg-indigo-950/40 border border-indigo-800/50 px-1.5 py-0.5 font-bold text-indigo-300 hover:bg-indigo-900/60"
+                          title="Click to filter by application"
+                        >
+                          📱 {event.attributes.app_name || event.attributes.appName || event.attributes.application}
+                        </button>
+                      )}
+
+                      {/* Category Badge */}
+                      {(event.attributes.category || event.attributes.cat_name || event.attributes.web_category) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const c = event.attributes.category || event.attributes.cat_name || event.attributes.web_category;
+                            setActiveFilter((prev) => ({ ...prev, categoryFilter: c }));
+                          }}
+                          className="rounded bg-purple-950/40 border border-purple-800/50 px-1.5 py-0.5 font-bold text-purple-300 hover:bg-purple-900/60"
+                          title="Click to filter by category"
+                        >
+                          📁 {event.attributes.category || event.attributes.cat_name || event.attributes.web_category}
+                        </button>
+                      )}
+
+                      {/* Firewall Rule ID */}
+                      {(event.attributes.fw_rule_id || event.attributes.rule_id) && (
+                        <span className="rounded bg-emerald-950/40 border border-emerald-800/50 px-1.5 py-0.5 font-mono text-emerald-400">
+                          🛡️ rule:{event.attributes.fw_rule_id || event.attributes.rule_id}
+                        </span>
+                      )}
+
+                      {/* Action / Status Pill */}
+                      {(event.attributes.status || event.attributes.action || event.attributes.log_subtype) && (
+                        <span
+                          className={`rounded px-1.5 py-0.5 font-bold uppercase ${
+                            (event.attributes.status || event.attributes.action || "").toLowerCase().includes("block") ||
+                            (event.attributes.status || event.attributes.action || "").toLowerCase().includes("deny") ||
+                            (event.attributes.status || event.attributes.action || "").toLowerCase().includes("drop")
+                              ? "bg-red-950/60 border border-red-800/60 text-red-400"
+                              : (event.attributes.status || event.attributes.action || "").toLowerCase().includes("warn")
+                              ? "bg-amber-950/60 border border-amber-800/60 text-amber-400"
+                              : "bg-emerald-950/60 border border-emerald-800/60 text-emerald-400"
+                          }`}
+                        >
+                          {event.attributes.status || event.attributes.action || event.attributes.log_subtype}
+                        </span>
+                      )}
+                    </div>
                   </td>
 
                   <td className="px-2 py-2 text-right whitespace-nowrap">
