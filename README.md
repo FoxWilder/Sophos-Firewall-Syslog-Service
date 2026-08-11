@@ -11,6 +11,7 @@ A high-performance real-time Sophos SFOS Syslog Receiver, Log Parser, and Securi
 
 ## 🌟 Key Features
 
+- 🧠 **Sophos SFOS v22.0 Human Log Translator (`HUMAN_LOGS`)**: Translates verbose Sophos key-value syslog events into plain-English security narratives, color-coded status badges, Sophos policy explanations, traffic details, and recommended administrator actions based on official [Sophos Firewall 22.0 Syslog Documentation](https://docs.sophos.com/nsg/sophos-firewall/22.0/syslog/index.html).
 - 🖥️ **Tactical Dark Console UI**: High-density SOC dashboard with monospace typography and low-eyestrain dark palette.
 - ⚡ **Real-Time Log Stream**: Live ingestion stream with play/pause controls, instant buffer flush, and status indicators.
 - 🔍 **Sophos Key-Value Parser**: Extracts key parameters (`device_name`, `src_ip`, `dst_ip`, `log_id`, `fw_rule_id`, `user_name`, `app_name`).
@@ -35,11 +36,14 @@ Sophos-Firewall-Syslog-Service/
 │   │   ├── EventDetailModal.tsx  # Syslog inspector with raw payload & KV grid
 │   │   ├── EventExplorer.tsx     # Full-text search and multi-field log filter
 │   │   ├── Header.tsx            # Navigation header & live status indicators
+│   │   ├── HumanLogsView.tsx     # Human-readable Sophos 22.0 log translator page
 │   │   ├── SettingsView.tsx      # Receiver listener settings & alert rules
 │   │   ├── SetupGuideView.tsx    # Windows Server & SFOS deployment guide
 │   │   └── SyslogInjectorModal.tsx# Test packet generator modal
 │   ├── data/
 │   │   └── mockEvents.ts         # Sample SFOS log stream generator
+│   ├── lib/
+│   │   └── sophosParser.ts       # Sophos SFOS 22.0 log ID decoder & narrative translator
 │   ├── App.tsx                   # Main state container & view router
 │   ├── main.tsx                  # Application mount point
 │   ├── index.css                 # Tailwind CSS styling configuration

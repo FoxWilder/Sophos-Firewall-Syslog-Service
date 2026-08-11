@@ -14,10 +14,11 @@ import {
   X,
   Server,
   Radio,
-  Zap
+  Zap,
+  FileText
 } from "lucide-react";
 
-export type NavTab = "dashboard" | "explorer" | "analytics" | "settings" | "setup" | "injector";
+export type NavTab = "dashboard" | "human_logs" | "explorer" | "analytics" | "settings" | "setup" | "injector";
 
 interface HeaderProps {
   activeTab: NavTab;
@@ -46,6 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navItems: { id: NavTab; label: string; icon: React.ElementType; badge?: string }[] = [
     { id: "dashboard", label: "DASHBOARD", icon: Activity },
+    { id: "human_logs", label: "HUMAN_LOGS", icon: FileText, badge: "PARSER" },
     { id: "explorer", label: "LOG_EXPLORER", icon: Filter, badge: String(eventCount) },
     { id: "analytics", label: "ANALYTICS", icon: BarChart3 },
     { id: "settings", label: "SETTINGS", icon: SlidersHorizontal },

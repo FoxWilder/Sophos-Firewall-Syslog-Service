@@ -14,6 +14,7 @@ import {
 } from "./data/mockEvents";
 import { Header, NavTab } from "./components/Header";
 import { DashboardView } from "./components/DashboardView";
+import { HumanLogsView } from "./components/HumanLogsView";
 import { EventExplorer } from "./components/EventExplorer";
 import { AnalyticsView } from "./components/AnalyticsView";
 import { SettingsView } from "./components/SettingsView";
@@ -300,6 +301,14 @@ export default function App() {
             onSelectEvent={setSelectedEvent}
             onOpenSetupGuide={() => setActiveTab("setup")}
             onOpenSettings={() => setActiveTab("settings")}
+          />
+        )}
+
+        {activeTab === "human_logs" && (
+          <HumanLogsView
+            events={events}
+            onSelectEvent={setSelectedEvent}
+            onOpenExplorerWithFilter={handleOpenExplorerWithFilter}
           />
         )}
 
