@@ -1,70 +1,137 @@
-# Sophos Firewall Syslog Receiver
+# Sophos Firewall Syslog Service
 
-A real-time, high-performance Sophos SFOS Syslog Receiver and Monitoring Dashboard built with React, Vite, Tailwind CSS, Recharts, and Lucide Icons.
+A high-performance real-time Sophos SFOS Syslog Receiver, Log Parser, and Security Monitoring Console built with React, Vite, TypeScript, Tailwind CSS, Recharts, and Lucide Icons.
+
+[![Build and Deploy Web Preview](https://github.com/FoxWilder/Sophos-Firewall-Syslog-Service/actions/workflows/deploy.yml/badge.svg)](https://github.com/FoxWilder/Sophos-Firewall-Syslog-Service/actions/workflows/deploy.yml)
+[![Live Web Preview](https://img.shields.io/badge/Live_Preview-GitHub_Pages-00d1b2?style=flat&logo=github)](https://FoxWilder.github.io/Sophos-Firewall-Syslog-Service/)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-emerald)](https://github.com/FoxWilder/Sophos-Firewall-Syslog-Service/releases)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
 
 ## 🌟 Key Features
 
-- **Real-Time Live Syslog Monitoring**: Ingests, streams, and displays high-volume RFC 5424 / RFC 3164 Sophos SFOS log streams.
-- **Sophos Key-Value Attribute Parser**: Automatically extracts key-value parameters (`device_name`, `src_ip`, `dst_ip`, `log_id`, `rule_id`, `user_name`, `fw_rule`, `app_name`).
-- **Interactive Event Explorer & Search**: Instant full-text searching, multi-attribute column filtering, facility and severity toggles.
-- **Visual Event Analytics**: Time-series volume trends, threat severity distribution ratios, top firewall host volume bar charts, and facility breakdowns.
-- **Receiver Configuration**: Custom UDP/TCP/TLS port settings, log retention windows, file size rotation thresholds, and automated alert trigger rules.
-- **Packet Injector & Simulator**: Integrated test packet generator for testing alert rules and live stream filters without needing live firewall traffic.
-- **Windows Deployment Guide**: Step-by-step PowerShell scripts and Windows Defender Firewall commands for host deployment.
+- 🖥️ **Tactical Dark Console UI**: High-density SOC dashboard with monospace typography and low-eyestrain dark palette.
+- ⚡ **Real-Time Log Stream**: Live ingestion stream with play/pause controls, instant buffer flush, and status indicators.
+- 🔍 **Sophos Key-Value Parser**: Extracts key parameters (`device_name`, `src_ip`, `dst_ip`, `log_id`, `fw_rule_id`, `user_name`, `app_name`).
+- 📊 **Recharts Visual Analytics**: Hourly log volume trends, severity distribution pie charts, top firewall host metrics, and facility ratios.
+- ⚙️ **Listener Settings & Alert Engine**: Custom ports (UDP/TCP/TLS), log retention windows, file size rotation thresholds, and critical alert triggers.
+- 🛠️ **Windows Server & Linux Daemon**: Complete Python socket server daemon with Windows PowerShell launcher and systemd service file.
+- 🚀 **GitHub Pages Deployment**: Automated CI/CD pipeline via GitHub Actions for building and deploying the live Web Preview.
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
-- Node.js 18+
-- npm or bun
+## 📂 Repository File Structure
 
-### Local Development Setup
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-org/sophos-syslog-receiver.git
-   cd sophos-syslog-receiver
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **Build for production:**
-   ```bash
-   npm run build
-   ```
-
-5. **Type check / Lint:**
-   ```bash
-   npm run lint
-   ```
-
-## 🛡️ Syslog Listener Configuration (Python Service)
-
-The project includes Python receiver scripts for running on Windows Server or Linux host collectors:
-
-```powershell
-# Windows PowerShell Launcher
-cd syslog-server
-.\start-syslog-server.ps1
-
-# Windows Firewall Port Allow (PowerShell Admin)
-New-NetFirewallRule -DisplayName "Sophos Syslog UDP 5514" -Direction Inbound -Protocol UDP -LocalPort 5514 -Action Allow
-New-NetFirewallRule -DisplayName "Sophos Syslog TCP 5514" -Direction Inbound -Protocol TCP -LocalPort 5514 -Action Allow
+```
+Sophos-Firewall-Syslog-Service/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml            # GitHub Actions CI/CD for Pages Web Preview
+├── src/
+│   ├── components/
+│   │   ├── AnalyticsView.tsx     # Recharts threat analytics dashboard
+│   │   ├── DashboardView.tsx     # Primary live stream monitoring console
+│   │   ├── EventDetailModal.tsx  # Syslog inspector with raw payload & KV grid
+│   │   ├── EventExplorer.tsx     # Full-text search and multi-field log filter
+│   │   ├── Header.tsx            # Navigation header & live status indicators
+│   │   ├── SettingsView.tsx      # Receiver listener settings & alert rules
+│   │   ├── SetupGuideView.tsx    # Windows Server & SFOS deployment guide
+│   │   └── SyslogInjectorModal.tsx# Test packet generator modal
+│   ├── data/
+│   │   └── mockEvents.ts         # Sample SFOS log stream generator
+│   ├── App.tsx                   # Main state container & view router
+│   ├── main.tsx                  # Application mount point
+│   ├── index.css                 # Tailwind CSS styling configuration
+│   └── types.ts                  # TypeScript interfaces & log definitions
+├── syslog-server/
+│   ├── syslog_receiver.py        # Python dual UDP/TCP syslog socket server
+│   ├── start-syslog-server.ps1   # PowerShell launcher & Windows firewall script
+│   ├── send-test-syslog.py       # CLI syslog packet generator
+│   ├── syslog_receiver.service   # Linux systemd service unit file
+│   └── README.md                 # Backend Python service documentation
+├── CHANGELOG.md                  # Version release history
+├── RELEASE.md                    # Release v1.0.0 detailed documentation
+├── README.md                     # Repository overview & setup instructions
+├── index.html                    # Single Page Application entry point
+├── package.json                  # Dependencies & npm scripts
+├── tsconfig.json                 # TypeScript compiler configuration
+├── vite.config.ts                # Vite build & relative path configuration
+└── metadata.json                 # Application metadata
 ```
 
-## 📊 Sophos SFOS Log Format Supported
-- Standard RFC 5424 Syslog
-- Sophos SFOS Key-Value Format (`device_name="XG" src_ip="192.168.1.50" dst_ip="8.8.8.8" fw_rule_id="10"`)
-- Facilities: `firewall`, `auth`, `system`, `vpn`, `atp`, `ips`, `waf`, `wireless`
-- Severities: `Debug`, `Info`, `Notice`, `Warning`, `Error`, `Critical`
+---
+
+## 🚀 Quick Start & Installation
+
+### Prerequisites
+
+- **Node.js**: v18.0.0 or higher
+- **npm** or **bun**
+- **Python**: v3.8+ (for host syslog receiver service)
+
+### 1. Web Preview Dashboard Setup
+
+```bash
+# Clone repository
+git clone https://github.com/FoxWilder/Sophos-Firewall-Syslog-Service.git
+cd Sophos-Firewall-Syslog-Service
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run linter & TypeScript verification
+npm run lint
+
+# Build for production
+npm run build
+```
+
+The web dashboard will be available at `http://localhost:3000`.
+
+---
+
+## 🛡️ Backend Syslog Receiver Setup
+
+To run the host collector daemon on Windows Server or Linux:
+
+### Windows Server / Windows 11 (PowerShell Admin)
+
+```powershell
+# Navigate to syslog-server directory
+cd syslog-server
+
+# Run setup and start listener on port 5514
+.\start-syslog-server.ps1
+```
+
+### Linux (Systemd Service)
+
+```bash
+sudo cp syslog-server/syslog_receiver.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now syslog_receiver.service
+```
+
+### Test Packet Transmission
+
+```bash
+python syslog-server/send-test-syslog.py --host 127.0.0.1 --port 5514 --protocol udp
+```
+
+---
+
+## 🌐 Live Web Preview
+
+The Web Preview is automatically built and deployed via GitHub Pages workflow on every push to `main` or `v*` tag releases:
+
+👉 **[Launch Live Web Preview](https://FoxWilder.github.io/Sophos-Firewall-Syslog-Service/)**
+
+---
 
 ## 📄 License
-MIT License
+
+Distributed under the [MIT License](LICENSE).

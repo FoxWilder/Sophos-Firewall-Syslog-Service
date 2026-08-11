@@ -31,7 +31,6 @@ jobs:
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-[#] Node.js version: 20
           node-version: 20
           cache: 'npm'
 

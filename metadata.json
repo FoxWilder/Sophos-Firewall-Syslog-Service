@@ -1,6 +1,6 @@
 {
-  "name": "Sophos Syslog Receiver",
-  "description": "Sophos Firewall Syslog Receiver dashboard with real-time log stream monitoring, advanced multi-attribute filtering, listener configuration, alert rules, and diagnostic tools.",
+  "name": "Sophos Firewall Syslog Service",
+  "description": "Real-time Sophos SFOS Syslog Receiver, Log Parser, and Security Monitoring Console",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

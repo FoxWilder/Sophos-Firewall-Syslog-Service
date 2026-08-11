@@ -1,0 +1,14 @@
+[Unit]
+Description=Sophos Firewall Syslog Receiver Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/sophos-syslog-receiver/syslog-server
+ExecStart=/usr/bin/python3 syslog_receiver.py --ip 0.0.0.0 --udp-port 5514 --tcp-port 5514
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
