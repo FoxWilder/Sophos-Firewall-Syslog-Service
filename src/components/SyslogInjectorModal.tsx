@@ -79,31 +79,31 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-xs font-mono select-none">
-      <div className="relative w-full max-w-lg rounded border border-[#2a2a2a] bg-[#111113] p-4 text-[#d1d1d1] shadow-2xl space-y-3">
+      <div className="relative w-full max-w-lg rounded border border-[#1f3354] bg-[#0b192c] p-4 text-[#a2bdde] shadow-2xl space-y-3">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-2">
+        <div className="flex items-center justify-between border-b border-[#1f3354] pb-2">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-[#16161a] border border-[#2a2a2a] text-emerald-400">
+            <div className="flex h-7 w-7 items-center justify-center rounded bg-[#07111e] border border-[#1f3354] text-[#00a3e0]">
               <Send size={14} />
             </div>
             <div>
               <h3 className="text-xs font-bold text-white uppercase tracking-wider">INJECT_TEST_SYSLOG_PACKET</h3>
-              <p className="text-[9px] text-[#666666]">Simulate an incoming Sophos Firewall syslog payload</p>
+              <p className="text-[9px] text-[#8ea8cb]">Simulate an incoming Sophos Firewall syslog payload</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#888888] hover:text-white">
+          <button onClick={onClose} className="text-[#8ea8cb] hover:text-white">
             <X size={16} />
           </button>
         </div>
 
         {injectedSuccess ? (
           <div className="py-6 text-center space-y-2">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded bg-[#0066cc]/20 border border-[#00a3e0]/40 text-[#00a3e0]">
               <Check size={20} />
             </div>
-            <p className="text-xs font-bold text-emerald-400 uppercase">PACKET_INJECTED_SUCCESSFULLY</p>
-            <p className="text-[10px] text-[#888888]">Message ingested into stream and evaluated against active alert filters.</p>
+            <p className="text-xs font-bold text-[#00a3e0] uppercase">PACKET_INJECTED_SUCCESSFULLY</p>
+            <p className="text-[10px] text-[#8ea8cb]">Message ingested into stream and evaluated against active alert filters.</p>
           </div>
         ) : (
           <form onSubmit={handleInject} className="space-y-3 text-xs">
@@ -115,7 +115,7 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="faithmobiel"
-                  className="w-full rounded border border-[#1f3354] bg-[#07111e] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
+                  className="w-full rounded border border-[#1f3354] bg-[#050c17] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 />
               </div>
 
@@ -125,7 +125,7 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
                   placeholder="flowgpt.com"
-                  className="w-full rounded border border-[#1f3354] bg-[#07111e] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
+                  className="w-full rounded border border-[#1f3354] bg-[#050c17] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 />
               </div>
 
@@ -135,18 +135,18 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
                   type="number"
                   value={durationSeconds}
                   onChange={(e) => setDurationSeconds(Number(e.target.value))}
-                  className="w-full rounded border border-[#1f3354] bg-[#07111e] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
+                  className="w-full rounded border border-[#1f3354] bg-[#050c17] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 />
               </div>
             </div>
 
             <div className="grid gap-3 grid-cols-2">
               <div>
-                <label className="mb-1 block text-[10px] font-bold text-[#888888] uppercase">Syslog Facility</label>
+                <label className="mb-1 block text-[10px] font-bold text-[#8ea8cb] uppercase">Syslog Facility</label>
                 <select
                   value={facility}
                   onChange={(e) => setFacility(e.target.value as Facility)}
-                  className="w-full rounded border border-[#2a2a2a] bg-[#16161a] p-2 text-xs text-white outline-none focus:border-emerald-500 font-mono"
+                  className="w-full rounded border border-[#1f3354] bg-[#050c17] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 >
                   <option value="firewall">firewall</option>
                   <option value="auth">auth</option>
@@ -160,11 +160,11 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
               </div>
 
               <div>
-                <label className="mb-1 block text-[10px] font-bold text-[#888888] uppercase">Severity</label>
+                <label className="mb-1 block text-[10px] font-bold text-[#8ea8cb] uppercase">Severity</label>
                 <select
                   value={severity}
                   onChange={(e) => setSeverity(e.target.value as Severity)}
-                  className="w-full rounded border border-[#2a2a2a] bg-[#16161a] p-2 text-xs text-white outline-none focus:border-emerald-500 font-mono"
+                  className="w-full rounded border border-[#1f3354] bg-[#050c17] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
                 >
                   <option value="Info">Info</option>
                   <option value="Notice">Notice</option>
@@ -176,26 +176,26 @@ export const SyslogInjectorModal: React.FC<SyslogInjectorModalProps> = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-[10px] font-bold text-[#888888] uppercase">Message Content</label>
+              <label className="mb-1 block text-[10px] font-bold text-[#8ea8cb] uppercase">Message Content</label>
               <textarea
                 rows={3}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full rounded border border-[#2a2a2a] bg-[#16161a] p-2 text-xs text-white outline-none focus:border-emerald-500 font-mono"
+                className="w-full rounded border border-[#1f3354] bg-[#050c17] p-2 text-xs text-white outline-none focus:border-[#00a3e0] font-mono"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#2a2a2a]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#1f3354]">
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded border border-[#2a2a2a] bg-[#16161a] px-3 py-1.5 text-xs font-bold text-[#888888] hover:bg-[#222226] hover:text-white"
+                className="rounded border border-[#1f3354] bg-[#07111e] px-3 py-1.5 text-xs font-bold text-[#8ea8cb] hover:bg-[#13253f] hover:text-white"
               >
                 CANCEL
               </button>
               <button
                 type="submit"
-                className="flex items-center gap-1 rounded bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 text-xs font-bold text-black uppercase"
+                className="flex items-center gap-1 rounded bg-[#0066cc] hover:bg-[#0052a3] px-3 py-1.5 text-xs font-bold text-white uppercase"
               >
                 <Send size={12} /> INJECT_PACKET
               </button>

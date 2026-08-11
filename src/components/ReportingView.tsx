@@ -413,21 +413,21 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
     <div className="space-y-4 font-mono select-none">
       
       {/* Top Banner Header */}
-      <div className="rounded border border-[#2a2a2a] bg-[#111113] p-4">
+      <div className="rounded border border-[#1f3354] bg-[#0b192c] p-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded bg-emerald-950/80 border border-emerald-800/60 text-emerald-400">
+              <span className="flex h-7 w-7 items-center justify-center rounded bg-[#0066cc] text-white">
                 <Clock size={16} />
               </span>
-              <h2 className="text-white font-bold text-sm tracking-tight uppercase">
-                EXTENDED_USER_ACTIVITY_&_DURATION_REPORTING
+              <h2 className="text-white font-bold text-sm tracking-tight uppercase flex items-center gap-2">
+                <span className="text-[#00a3e0] font-black">SOPHOS</span> Extended User Activity & Duration Reporting
               </h2>
-              <span className="text-[10px] bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 px-2 py-0.5 rounded font-bold uppercase">
-                SOPHOS SFOS v22.0 AUDIT
+              <span className="text-[10px] bg-[#0066cc]/30 border border-[#00a3e0]/50 text-[#00a3e0] px-2 py-0.5 rounded font-bold uppercase">
+                SFOS v22.0 AUDIT
               </span>
             </div>
-            <p className="text-[11px] text-[#888888] mt-1 leading-relaxed">
+            <p className="text-[11px] text-[#8ea8cb] mt-1 leading-relaxed">
               Analyze user browsing history, application usage, active session connection duration, bandwidth consumption, and web policy enforcement across custom timeframes.
             </p>
           </div>
@@ -436,7 +436,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-1.5 rounded border border-[#333333] bg-[#1a1a1d] px-3 py-1.5 text-[10px] font-bold text-emerald-400 hover:bg-[#222226] hover:border-emerald-500/50 transition"
+              className="flex items-center gap-1.5 rounded border border-[#0066cc] bg-[#0066cc] px-3 py-1.5 text-[10px] font-bold text-white hover:bg-[#0052a3] transition"
               title="Download full dataset as CSV file"
             >
               <Download size={13} />
@@ -445,7 +445,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
 
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 rounded border border-[#333333] bg-[#1a1a1d] px-3 py-1.5 text-[10px] font-bold text-[#cccccc] hover:bg-[#222226] hover:border-[#555555] transition"
+              className="flex items-center gap-1.5 rounded border border-[#1f3354] bg-[#07111e] px-3 py-1.5 text-[10px] font-bold text-[#a2bdde] hover:bg-[#13253f] hover:text-white transition"
               title="Print executive summary report"
             >
               <Printer size={13} />
@@ -455,28 +455,28 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
         </div>
 
         {/* Global Key Metrics Summary Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4 pt-3 border-t border-[#1f1f24]">
-          <div className="rounded border border-[#222226] bg-[#16161a] p-2.5 text-center">
-            <span className="text-[9px] text-[#777777] uppercase block font-bold">TOTAL ACTIVE DURATION</span>
-            <span className="text-sm font-bold text-emerald-400">{globalMetrics.totalDurationFormatted}</span>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4 pt-3 border-t border-[#1f3354]">
+          <div className="rounded border border-[#1f3354] bg-[#07111e] p-2.5 text-center">
+            <span className="text-[9px] text-[#8ea8cb] uppercase block font-bold">TOTAL ACTIVE DURATION</span>
+            <span className="text-sm font-bold text-[#00a3e0]">{globalMetrics.totalDurationFormatted}</span>
           </div>
 
-          <div className="rounded border border-[#222226] bg-[#16161a] p-2.5 text-center">
-            <span className="text-[9px] text-[#777777] uppercase block font-bold">ACTIVE USERS</span>
+          <div className="rounded border border-[#1f3354] bg-[#07111e] p-2.5 text-center">
+            <span className="text-[9px] text-[#8ea8cb] uppercase block font-bold">ACTIVE USERS</span>
             <span className="text-sm font-bold text-white">{globalMetrics.activeUsersCount} Users</span>
           </div>
 
-          <div className="rounded border border-[#222226] bg-[#16161a] p-2.5 text-center">
-            <span className="text-[9px] text-[#777777] uppercase block font-bold">SITES & APPS VISITED</span>
-            <span className="text-sm font-bold text-cyan-300">{globalMetrics.uniqueSitesCount} Unique</span>
+          <div className="rounded border border-[#1f3354] bg-[#07111e] p-2.5 text-center">
+            <span className="text-[9px] text-[#8ea8cb] uppercase block font-bold">SITES & APPS VISITED</span>
+            <span className="text-sm font-bold text-[#00a3e0]">{globalMetrics.uniqueSitesCount} Unique</span>
           </div>
 
-          <div className="rounded border border-[#222226] bg-[#16161a] p-2.5 text-center">
-            <span className="text-[9px] text-[#777777] uppercase block font-bold">BANDWIDTH CONSUMED</span>
+          <div className="rounded border border-[#1f3354] bg-[#07111e] p-2.5 text-center">
+            <span className="text-[9px] text-[#8ea8cb] uppercase block font-bold">BANDWIDTH CONSUMED</span>
             <span className="text-sm font-bold text-amber-300">{globalMetrics.totalBytesFormatted}</span>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 rounded border border-emerald-900/40 bg-emerald-950/20 p-2.5 text-center">
+          <div className="col-span-2 sm:col-span-1 rounded border border-emerald-900/40 bg-emerald-950/30 p-2.5 text-center">
             <span className="text-[9px] text-emerald-400 uppercase block font-bold">POLICY COMPLIANCE</span>
             <span className="text-sm font-bold text-emerald-400">{globalMetrics.complianceRate}% Passed</span>
           </div>
@@ -484,14 +484,14 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3 space-y-3">
+      <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3 space-y-3">
         
         {/* Row 1: Timeframe & User Selector */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           
           {/* Time Span Selector Buttons */}
-          <div className="flex flex-wrap items-center gap-1 bg-[#16161a] p-1 rounded border border-[#2a2a2a]">
-            <span className="text-[10px] text-[#666666] uppercase font-bold px-2 flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1 bg-[#07111e] p-1 rounded border border-[#1f3354]">
+            <span className="text-[10px] text-[#8ea8cb] uppercase font-bold px-2 flex items-center gap-1">
               <Calendar size={12} />
               <span>TIMEFRAME:</span>
             </span>
@@ -508,8 +508,8 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
                 onClick={() => setFilters((f) => ({ ...f, timeSpan: t.id as any }))}
                 className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded transition ${
                   filters.timeSpan === t.id
-                    ? "bg-emerald-950 border border-emerald-700/80 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
-                    : "text-[#888888] hover:text-white"
+                    ? "bg-[#0066cc] border border-[#00a3e0] text-white shadow-[0_0_8px_rgba(0,102,204,0.3)]"
+                    : "text-[#8ea8cb] hover:text-white"
                 }`}
               >
                 {t.label}
@@ -519,7 +519,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
 
           {/* User Selector Dropdown */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-[#666666] uppercase font-bold shrink-0 flex items-center gap-1">
+            <span className="text-[10px] text-[#8ea8cb] uppercase font-bold shrink-0 flex items-center gap-1">
               <User size={12} />
               <span>SELECT USER:</span>
             </span>
@@ -527,7 +527,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
             <select
               value={filters.user}
               onChange={(e) => setFilters((f) => ({ ...f, user: e.target.value }))}
-              className="w-full sm:w-64 rounded border border-emerald-500/60 bg-[#16161a] py-1.5 px-2.5 text-xs font-bold text-emerald-400 focus:border-emerald-400 focus:outline-none"
+              className="w-full sm:w-64 rounded border border-[#00a3e0] bg-[#07111e] py-1.5 px-2.5 text-xs font-bold text-[#00a3e0] focus:border-[#00a3e0] focus:outline-none"
             >
               <option value="all">⚡ ALL USERS (AGGREGATE REPORT)</option>
               {uniqueUsers.map((u) => (
@@ -541,38 +541,38 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
 
         {/* Custom Date Range Pickers (if Custom selected) */}
         {filters.timeSpan === "custom" && (
-          <div className="flex flex-wrap items-center gap-3 bg-[#18181c] p-2.5 rounded border border-[#2a2a30] text-xs">
-            <span className="text-emerald-400 font-bold uppercase text-[10px]">Custom Range Selection:</span>
+          <div className="flex flex-wrap items-center gap-3 bg-[#07111e] p-2.5 rounded border border-[#1f3354] text-xs">
+            <span className="text-[#00a3e0] font-bold uppercase text-[10px]">Custom Range Selection:</span>
             <div className="flex items-center gap-1.5">
-              <span className="text-[#888888] text-[10px]">From:</span>
+              <span className="text-[#8ea8cb] text-[10px]">From:</span>
               <input
                 type="date"
                 value={filters.customStartDate}
                 onChange={(e) => setFilters((f) => ({ ...f, customStartDate: e.target.value }))}
-                className="rounded border border-[#333333] bg-[#111113] px-2 py-1 text-white text-xs"
+                className="rounded border border-[#1f3354] bg-[#050c17] px-2 py-1 text-white text-xs"
               />
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[#888888] text-[10px]">To:</span>
+              <span className="text-[#8ea8cb] text-[10px]">To:</span>
               <input
                 type="date"
                 value={filters.customEndDate}
                 onChange={(e) => setFilters((f) => ({ ...f, customEndDate: e.target.value }))}
-                className="rounded border border-[#333333] bg-[#111113] px-2 py-1 text-white text-xs"
+                className="rounded border border-[#1f3354] bg-[#050c17] px-2 py-1 text-white text-xs"
               />
             </div>
           </div>
         )}
 
         {/* Row 2: Secondary Dropdowns & Search */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-[#1a1a1d]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-[#1f3354]">
           
           <div className="flex flex-wrap items-center gap-2">
             {/* Department Selector */}
             <select
               value={filters.department}
               onChange={(e) => setFilters((f) => ({ ...f, department: e.target.value }))}
-              className="rounded border border-[#2a2a2a] bg-[#16161a] py-1 px-2 text-[10px] text-[#cccccc] focus:border-emerald-500 focus:outline-none"
+              className="rounded border border-[#1f3354] bg-[#07111e] py-1 px-2 text-[10px] text-white focus:border-[#00a3e0] focus:outline-none"
             >
               <option value="all">All Departments</option>
               {uniqueDepartments.map((d) => (
@@ -586,7 +586,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
             <select
               value={filters.category}
               onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
-              className="rounded border border-[#2a2a2a] bg-[#16161a] py-1 px-2 text-[10px] text-[#cccccc] focus:border-emerald-500 focus:outline-none"
+              className="rounded border border-[#1f3354] bg-[#07111e] py-1 px-2 text-[10px] text-white focus:border-[#00a3e0] focus:outline-none"
             >
               <option value="all">All App Categories</option>
               {uniqueCategories.map((c) => (
@@ -600,7 +600,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
             <select
               value={filters.status}
               onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
-              className="rounded border border-[#2a2a2a] bg-[#16161a] py-1 px-2 text-[10px] text-[#cccccc] focus:border-emerald-500 focus:outline-none"
+              className="rounded border border-[#1f3354] bg-[#07111e] py-1 px-2 text-[10px] text-white focus:border-[#00a3e0] focus:outline-none"
             >
               <option value="all">All Statuses (Allowed & Blocked)</option>
               <option value="Allowed">Allowed Connections Only</option>
@@ -610,7 +610,7 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
             {(filters.user !== "all" || filters.department !== "all" || filters.category !== "all" || filters.status !== "all" || filters.searchQuery) && (
               <button
                 onClick={resetFilters}
-                className="flex items-center gap-1 rounded border border-[#333333] bg-[#1f1f24] px-2 py-1 text-[10px] text-[#aaaaaa] hover:text-white hover:border-[#555555]"
+                className="flex items-center gap-1 rounded border border-[#1f3354] bg-[#07111e] px-2 py-1 text-[10px] text-[#8ea8cb] hover:text-white hover:border-[#0066cc]"
                 title="Reset report filters"
               >
                 <RotateCcw size={10} />
@@ -621,18 +621,18 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
 
           {/* Search Bar */}
           <div className="relative w-full sm:w-64">
-            <Search size={13} className="absolute left-2.5 top-2.5 text-[#666666]" />
+            <Search size={13} className="absolute left-2.5 top-2.5 text-[#8ea8cb]" />
             <input
               type="text"
               value={filters.searchQuery}
               onChange={(e) => setFilters((f) => ({ ...f, searchQuery: e.target.value }))}
               placeholder="Search site, app, user, domain..."
-              className="w-full rounded border border-[#2a2a2a] bg-[#16161a] py-1.5 pl-8 pr-7 text-xs text-white placeholder-[#555555] focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded border border-[#1f3354] bg-[#07111e] py-1.5 pl-8 pr-7 text-xs text-white placeholder-[#8ea8cb]/50 focus:border-[#00a3e0] focus:outline-none"
             />
             {filters.searchQuery && (
               <button
                 onClick={() => setFilters((f) => ({ ...f, searchQuery: "" }))}
-                className="absolute right-2 top-2 text-xs text-[#888888] hover:text-white"
+                className="absolute right-2 top-2 text-xs text-[#8ea8cb] hover:text-white"
               >
                 ✕
               </button>
@@ -642,13 +642,13 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
       </div>
 
       {/* Sub-Tab Navigation Bar inside Reporting View */}
-      <div className="flex items-center gap-1 border-b border-[#2a2a2a] pb-1">
+      <div className="flex items-center gap-1 border-b border-[#1f3354] pb-1">
         <button
           onClick={() => setActiveReportTab("user_duration")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase rounded-t border-t border-x transition ${
             activeReportTab === "user_duration"
-              ? "bg-[#111113] border-[#2a2a2a] text-emerald-400 border-b-2 border-b-emerald-500"
-              : "bg-transparent border-transparent text-[#888888] hover:text-white"
+              ? "bg-[#0b192c] border-[#1f3354] text-[#00a3e0] border-b-2 border-b-[#00a3e0]"
+              : "bg-transparent border-transparent text-[#8ea8cb] hover:text-white"
           }`}
         >
           <Clock size={13} />
@@ -659,8 +659,8 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           onClick={() => setActiveReportTab("apps_bandwidth")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase rounded-t border-t border-x transition ${
             activeReportTab === "apps_bandwidth"
-              ? "bg-[#111113] border-[#2a2a2a] text-emerald-400 border-b-2 border-b-emerald-500"
-              : "bg-transparent border-transparent text-[#888888] hover:text-white"
+              ? "bg-[#0b192c] border-[#1f3354] text-[#00a3e0] border-b-2 border-b-[#00a3e0]"
+              : "bg-transparent border-transparent text-[#8ea8cb] hover:text-white"
           }`}
         >
           <BarChart3 size={13} />
@@ -671,8 +671,8 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           onClick={() => setActiveReportTab("policy_compliance")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase rounded-t border-t border-x transition ${
             activeReportTab === "policy_compliance"
-              ? "bg-[#111113] border-[#2a2a2a] text-emerald-400 border-b-2 border-b-emerald-500"
-              : "bg-transparent border-transparent text-[#888888] hover:text-white"
+              ? "bg-[#0b192c] border-[#1f3354] text-[#00a3e0] border-b-2 border-b-[#00a3e0]"
+              : "bg-transparent border-transparent text-[#8ea8cb] hover:text-white"
           }`}
         >
           <ShieldAlert size={13} />
@@ -683,8 +683,8 @@ export const ReportingView: React.FC<ReportingViewProps> = ({ events }) => {
           onClick={() => setActiveReportTab("executive_summary")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase rounded-t border-t border-x transition ${
             activeReportTab === "executive_summary"
-              ? "bg-[#111113] border-[#2a2a2a] text-emerald-400 border-b-2 border-b-emerald-500"
-              : "bg-transparent border-transparent text-[#888888] hover:text-white"
+              ? "bg-[#0b192c] border-[#1f3354] text-[#00a3e0] border-b-2 border-b-[#00a3e0]"
+              : "bg-transparent border-transparent text-[#8ea8cb] hover:text-white"
           }`}
         >
           <FileText size={13} />

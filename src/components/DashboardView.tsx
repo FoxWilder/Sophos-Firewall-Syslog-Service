@@ -224,16 +224,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <section className="grid gap-4 lg:grid-cols-[1fr_280px]">
         
         {/* Left Column: Recent Events Stream */}
-        <div className="min-w-0 rounded border border-[#2a2a2a] bg-[#0d0d0f]">
+        <div className="min-w-0 rounded border border-[#1f3354] bg-[#0b192c]">
           
           {/* Header & CMD Input Bar */}
-          <div className="border-b border-[#2a2a2a] bg-[#111113] p-3 space-y-3">
+          <div className="border-b border-[#1f3354] bg-[#07111e] p-3 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase text-[#666666] font-bold tracking-widest">
+                <span className="text-[10px] uppercase text-[#8ea8cb] font-bold tracking-widest">
                   LIVE_LOG_STREAM
                 </span>
-                <span className="rounded bg-[#1f1f23] border border-[#2a2a2a] px-1.5 py-0.5 text-[9px] font-mono text-emerald-400">
+                <span className="rounded bg-[#0066cc]/30 border border-[#00a3e0]/50 px-1.5 py-0.5 text-[9px] font-mono text-[#00a3e0]">
                   {filteredEvents.length} LINES
                 </span>
               </div>
@@ -245,13 +245,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     setSeverity("All");
                     setFacility("All facilities");
                   }}
-                  className="text-[10px] text-[#666666] hover:text-[#888888] uppercase font-bold"
+                  className="text-[10px] text-[#8ea8cb] hover:text-white uppercase font-bold"
                 >
                   RESET_QUERY
                 </button>
                 <button
                   onClick={() => onOpenExplorerWithFilter()}
-                  className="flex items-center gap-1 rounded border border-[#333333] bg-[#16161a] px-2 py-1 text-[10px] font-bold text-emerald-400 hover:bg-[#222226]"
+                  className="flex items-center gap-1 rounded border border-[#0066cc] bg-[#0066cc] px-2 py-1 text-[10px] font-bold text-white hover:bg-[#0052a3] transition"
                 >
                   FULL_EXPLORER <ArrowUpRight size={12} />
                 </button>
@@ -260,17 +260,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* CMD Style Search Input */}
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <div className="flex-1 bg-black border border-[#2a2a2a] h-7 flex items-center px-2 gap-2 rounded">
-                <span className="text-[#555555] font-bold text-[10px]">CMD&gt;</span>
+              <div className="flex-1 bg-[#050c17] border border-[#1f3354] h-7 flex items-center px-2 gap-2 rounded">
+                <span className="text-[#00a3e0] font-bold text-[10px]">CMD&gt;</span>
                 <input
                   aria-label="Search live logs"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder='grep -i "threat" | host...'
-                  className="bg-transparent outline-none flex-1 text-emerald-400 text-[11px] placeholder:text-[#444444]"
+                  className="bg-transparent outline-none flex-1 text-white text-[11px] placeholder:text-[#8ea8cb]/50"
                 />
                 {query && (
-                  <button onClick={() => setQuery("")} className="text-[#666666] hover:text-white">
+                  <button onClick={() => setQuery("")} className="text-[#8ea8cb] hover:text-white">
                     <X size={12} />
                   </button>
                 )}
@@ -281,7 +281,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   aria-label="Filter by facility"
                   value={facility}
                   onChange={(e) => setFacility(e.target.value)}
-                  className="h-7 rounded bg-black border border-[#2a2a2a] px-2 text-[10px] text-[#d1d1d1] outline-none"
+                  className="h-7 rounded bg-[#050c17] border border-[#1f3354] px-2 text-[10px] text-white outline-none"
                 >
                   <option>All facilities</option>
                   <option>firewall</option>
@@ -298,7 +298,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   aria-label="Filter by severity"
                   value={severity}
                   onChange={(e) => setSeverity(e.target.value as Severity | "All")}
-                  className="h-7 rounded bg-black border border-[#2a2a2a] px-2 text-[10px] text-[#d1d1d1] outline-none"
+                  className="h-7 rounded bg-[#050c17] border border-[#1f3354] px-2 text-[10px] text-white outline-none"
                 >
                   <option value="All">All Severity</option>
                   <option>Info</option>
@@ -314,39 +314,39 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* Events Stream Table */}
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
-              <thead className="bg-[#16161a] text-[10px] text-[#666666]">
-                <tr className="border-b border-[#2a2a2a]">
-                  <th className="px-3 py-2 font-normal border-r border-[#2a2a2a] w-28">TIMESTAMP</th>
-                  <th className="px-3 py-2 font-normal border-r border-[#2a2a2a] w-28">HOST / IP</th>
-                  <th className="px-3 py-2 font-normal border-r border-[#2a2a2a] w-16">LVL</th>
-                  <th className="px-3 py-2 font-normal border-r border-[#2a2a2a] w-24">FACILITY</th>
-                  <th className="px-3 py-2 font-normal">MESSAGE</th>
-                  <th className="px-2 py-2 font-normal text-right w-12">VIEW</th>
+              <thead className="bg-[#07111e] text-[10px] text-[#8ea8cb]">
+                <tr className="border-b border-[#1f3354]">
+                  <th className="px-3 py-2 font-semibold border-r border-[#1f3354] w-28">TIMESTAMP</th>
+                  <th className="px-3 py-2 font-semibold border-r border-[#1f3354] w-28">HOST / IP</th>
+                  <th className="px-3 py-2 font-semibold border-r border-[#1f3354] w-16">LVL</th>
+                  <th className="px-3 py-2 font-semibold border-r border-[#1f3354] w-24">FACILITY</th>
+                  <th className="px-3 py-2 font-semibold">MESSAGE</th>
+                  <th className="px-2 py-2 font-semibold text-right w-12">VIEW</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1a1a1c]">
+              <tbody className="divide-y divide-[#13253f]">
                 {filteredEvents.map((event, idx) => (
                   <tr
                     key={`${event.id}-${idx}`}
                     onClick={() => onSelectEvent(event)}
-                    className="hover:bg-[#16161a] even:bg-[#121214] cursor-pointer group text-[11px]"
+                    className="hover:bg-[#13253f] even:bg-[#091424] cursor-pointer group text-[11px]"
                   >
-                    <td className="px-3 py-1.5 border-r border-[#2a2a2a] text-[#888888] font-mono whitespace-nowrap">
+                    <td className="px-3 py-1.5 border-r border-[#1f3354] text-[#a2bdde] font-mono whitespace-nowrap">
                       {event.time}
                     </td>
-                    <td className="px-3 py-1.5 border-r border-[#2a2a2a] whitespace-nowrap">
-                      <span className="text-blue-400 font-bold block truncate max-w-[100px]">{event.host}</span>
-                      <span className="text-[9px] text-[#666666] block">{event.ip}</span>
+                    <td className="px-3 py-1.5 border-r border-[#1f3354] whitespace-nowrap">
+                      <span className="text-[#00a3e0] font-bold block truncate max-w-[100px]">{event.host}</span>
+                      <span className="text-[9px] text-[#8ea8cb] block">{event.ip}</span>
                     </td>
-                    <td className="px-3 py-1.5 border-r border-[#2a2a2a] whitespace-nowrap">
+                    <td className="px-3 py-1.5 border-r border-[#1f3354] whitespace-nowrap">
                       <span className={`inline-block rounded px-1.5 py-0.2 text-[9px] font-bold border uppercase ${severityStyles[event.severity] || "text-[#888]"}`}>
                         {event.severity.slice(0, 4)}
                       </span>
                     </td>
-                    <td className="px-3 py-1.5 border-r border-[#2a2a2a] text-[#888888] whitespace-nowrap font-mono text-[10px]">
+                    <td className="px-3 py-1.5 border-r border-[#1f3354] text-[#a2bdde] whitespace-nowrap font-mono text-[10px]">
                       {event.facility}
                     </td>
-                    <td className="px-3 py-1.5 text-slate-300 font-mono text-[11px] truncate max-w-[380px]" title={event.message}>
+                    <td className="px-3 py-1.5 text-white font-mono text-[11px] truncate max-w-[380px]" title={event.message}>
                       {event.message}
                     </td>
                     <td className="px-2 py-1.5 text-right">
@@ -355,7 +355,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           e.stopPropagation();
                           onSelectEvent(event);
                         }}
-                        className="text-[#666666] hover:text-emerald-400"
+                        className="text-[#8ea8cb] hover:text-[#00a3e0]"
                       >
                         <Eye size={13} />
                       </button>
@@ -365,7 +365,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 {filteredEvents.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-[#666666] text-xs">
+                    <td colSpan={6} className="px-6 py-12 text-center text-[#8ea8cb] text-xs">
                       NO_LOGS_FOUND_MATCHING_FILTER
                     </td>
                   </tr>
@@ -379,12 +379,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <aside className="space-y-3">
           
           {/* Transport Listeners */}
-          <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3">
+          <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] uppercase text-[#666666] font-bold tracking-widest">
+              <span className="text-[10px] uppercase text-[#8ea8cb] font-bold tracking-widest">
                 LISTENERS
               </span>
-              <span className="text-[9px] text-emerald-400 font-bold">2 ACTIVE</span>
+              <span className="text-[9px] text-[#00a3e0] font-bold">2 ACTIVE</span>
             </div>
             <div>
               <TransportRow
@@ -412,19 +412,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Windows Setup Guide Link */}
-          <div className="rounded border border-[#2a2a2a] bg-[#16161a] p-3 space-y-2">
+          <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3 space-y-2">
             <div className="flex items-center gap-2">
-              <BookOpen size={14} className="text-emerald-400" />
+              <BookOpen size={14} className="text-[#00a3e0]" />
               <span className="text-[10px] uppercase font-bold text-white tracking-wider">
                 SETUP_DOCS
               </span>
             </div>
-            <p className="text-[10px] text-[#888888] leading-normal">
+            <p className="text-[10px] text-[#8ea8cb] leading-normal">
               Execute PowerShell scripts on target host to bind socket ports and permit firewall traffic.
             </p>
             <button
               onClick={onOpenSetupGuide}
-              className="mt-1 w-full flex items-center justify-between rounded border border-[#333333] bg-[#222226] px-2.5 py-1 text-[10px] font-bold uppercase text-white hover:bg-[#2b2b30]"
+              className="mt-1 w-full flex items-center justify-between rounded border border-[#1f3354] bg-[#07111e] px-2.5 py-1 text-[10px] font-bold uppercase text-white hover:bg-[#13253f] transition"
             >
               <span>READ_GUIDE</span>
               <ArrowUpRight size={12} />
@@ -432,32 +432,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Quick Config Specs */}
-          <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3 space-y-2">
+          <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase text-[#666666] font-bold tracking-widest">
+              <span className="text-[10px] uppercase text-[#8ea8cb] font-bold tracking-widest">
                 PARAMS
               </span>
-              <button onClick={onOpenSettings} className="text-[9px] text-emerald-400 underline">
+              <button onClick={onOpenSettings} className="text-[9px] text-[#00a3e0] underline">
                 EDIT
               </button>
             </div>
             
             <div className="space-y-1.5 text-[10px] font-mono">
-              <div className="flex justify-between border-b border-[#1c1c1f] pb-1">
-                <span className="text-[#666666]">BIND_ADDR</span>
+              <div className="flex justify-between border-b border-[#1f3354] pb-1">
+                <span className="text-[#8ea8cb]">BIND_ADDR</span>
                 <span className="text-white">{settings.bindAddress}</span>
               </div>
-              <div className="flex justify-between border-b border-[#1c1c1f] pb-1">
-                <span className="text-[#666666]">RETENTION</span>
+              <div className="flex justify-between border-b border-[#1f3354] pb-1">
+                <span className="text-[#8ea8cb]">RETENTION</span>
                 <span className="text-white">{settings.retentionDays}d</span>
               </div>
-              <div className="flex justify-between border-b border-[#1c1c1f] pb-1">
-                <span className="text-[#666666]">MAX_FILE</span>
+              <div className="flex justify-between border-b border-[#1f3354] pb-1">
+                <span className="text-[#8ea8cb]">MAX_FILE</span>
                 <span className="text-white">{settings.maxFileSizeMb}MB</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#666666]">SOPHOS_KV</span>
-                <span className="text-emerald-400">
+                <span className="text-[#8ea8cb]">SOPHOS_KV</span>
+                <span className="text-[#00a3e0]">
                   {settings.extractSophosKv ? "PARSER_ON" : "OFF"}
                 </span>
               </div>

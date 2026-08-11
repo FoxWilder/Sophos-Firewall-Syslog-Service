@@ -82,16 +82,16 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
     <div className="space-y-4 font-mono select-none">
       
       {/* Top Banner */}
-      <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5">
+      <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded bg-[#16161a] border border-[#2a2a2a] text-emerald-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-[#07111e] border border-[#1f3354] text-[#00a3e0]">
             <BarChart3 size={18} />
           </div>
           <div>
             <h2 className="text-xs font-bold text-white uppercase tracking-wider">
               SYSLOG_ANALYTICS_METRICS
             </h2>
-            <p className="text-[10px] text-[#666666]">
+            <p className="text-[10px] text-[#8ea8cb]">
               Real-time distribution metrics across severity, host, and facility layers
             </p>
           </div>
@@ -102,13 +102,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
       <div className="grid gap-4 lg:grid-cols-3">
         
         {/* Trend Area Chart */}
-        <div className="lg:col-span-2 rounded border border-[#2a2a2a] bg-[#111113] p-3.5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-2">
+        <div className="lg:col-span-2 rounded border border-[#1f3354] bg-[#0b192c] p-3.5 space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1f3354] pb-2">
             <h3 className="flex items-center gap-2 text-xs font-bold text-white uppercase">
-              <Activity size={14} className="text-emerald-400" />
+              <Activity size={14} className="text-[#00a3e0]" />
               EVENT_VOLUME_&_THREAT_TREND
             </h3>
-            <span className="text-[9px] text-emerald-400 font-bold uppercase">HOURLY_WINDOW</span>
+            <span className="text-[9px] text-[#00a3e0] font-bold uppercase">HOURLY_WINDOW</span>
           </div>
 
           <div className="h-56 w-full">
@@ -116,23 +116,23 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
               <AreaChart data={trendData}>
                 <defs>
                   <linearGradient id="eventGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#0066cc" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#0066cc" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient id="threatGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
                     <stop offset="95%" stopColor="#ef4444" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
-                <XAxis dataKey="time" stroke="#666666" fontSize={10} />
-                <YAxis stroke="#666666" fontSize={10} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1f3354" />
+                <XAxis dataKey="time" stroke="#8ea8cb" fontSize={10} />
+                <YAxis stroke="#8ea8cb" fontSize={10} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#16161a",
-                    borderColor: "#333333",
+                    backgroundColor: "#07111e",
+                    borderColor: "#1f3354",
                     borderRadius: "4px",
-                    color: "#d1d1d1",
+                    color: "#a2bdde",
                     fontSize: "11px",
                     fontFamily: "monospace"
                   }}
@@ -140,7 +140,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
                 <Area
                   type="monotone"
                   dataKey="events"
-                  stroke="#10b981"
+                  stroke="#00a3e0"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#eventGrad)"
@@ -161,10 +161,10 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
         </div>
 
         {/* Severity Pie Chart */}
-        <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-2">
+        <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5 space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1f3354] pb-2">
             <h3 className="flex items-center gap-2 text-xs font-bold text-white uppercase">
-              <PieChartIcon size={14} className="text-emerald-400" />
+              <PieChartIcon size={14} className="text-[#00a3e0]" />
               SEVERITY_RATIO
             </h3>
           </div>
@@ -187,9 +187,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#16161a",
-                    borderColor: "#333333",
-                    color: "#d1d1d1",
+                    backgroundColor: "#07111e",
+                    borderColor: "#1f3354",
+                    color: "#a2bdde",
                     fontSize: "10px",
                   }}
                 />
@@ -202,7 +202,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
               <div key={s.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: s.color }} />
-                  <span className="font-bold text-[#888888] uppercase">{s.name}</span>
+                  <span className="font-bold text-[#8ea8cb] uppercase">{s.name}</span>
                 </div>
                 <span className="font-mono text-white">{s.value}</span>
               </div>
@@ -216,10 +216,10 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
       <div className="grid gap-4 lg:grid-cols-2">
         
         {/* Top Hosts Bar Chart */}
-        <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-2">
+        <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5 space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1f3354] pb-2">
             <h3 className="flex items-center gap-2 text-xs font-bold text-white uppercase">
-              <Server size={14} className="text-emerald-400" />
+              <Server size={14} className="text-[#00a3e0]" />
               EVENTS_BY_FIREWALL_HOST
             </h3>
           </div>
@@ -227,28 +227,28 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
           <div className="h-48 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={hostData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
-                <XAxis dataKey="host" stroke="#666666" fontSize={10} />
-                <YAxis stroke="#666666" fontSize={10} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1f3354" />
+                <XAxis dataKey="host" stroke="#8ea8cb" fontSize={10} />
+                <YAxis stroke="#8ea8cb" fontSize={10} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#16161a",
-                    borderColor: "#333333",
-                    color: "#d1d1d1",
+                    backgroundColor: "#07111e",
+                    borderColor: "#1f3354",
+                    color: "#a2bdde",
                     fontSize: "10px",
                   }}
                 />
-                <Bar dataKey="count" fill="#10b981" radius={[2, 2, 0, 0]} name="Log Volume" />
+                <Bar dataKey="count" fill="#0066cc" radius={[2, 2, 0, 0]} name="Log Volume" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Facility Distribution Bar Chart */}
-        <div className="rounded border border-[#2a2a2a] bg-[#111113] p-3.5 space-y-3">
-          <div className="flex items-center justify-between border-b border-[#2a2a2a] pb-2">
+        <div className="rounded border border-[#1f3354] bg-[#0b192c] p-3.5 space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1f3354] pb-2">
             <h3 className="flex items-center gap-2 text-xs font-bold text-white uppercase">
-              <ShieldAlert size={14} className="text-emerald-400" />
+              <ShieldAlert size={14} className="text-[#00a3e0]" />
               EVENTS_BY_FACILITY
             </h3>
           </div>
@@ -256,18 +256,18 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({ events }) => {
           <div className="h-48 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={facilityData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#222226" />
-                <XAxis type="number" stroke="#666666" fontSize={10} />
-                <YAxis dataKey="facility" type="category" stroke="#666666" fontSize={10} width={70} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1f3354" />
+                <XAxis type="number" stroke="#8ea8cb" fontSize={10} />
+                <YAxis dataKey="facility" type="category" stroke="#8ea8cb" fontSize={10} width={70} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#16161a",
-                    borderColor: "#333333",
-                    color: "#d1d1d1",
+                    backgroundColor: "#07111e",
+                    borderColor: "#1f3354",
+                    color: "#a2bdde",
                     fontSize: "10px",
                   }}
                 />
-                <Bar dataKey="count" fill="#60a5fa" radius={[0, 2, 2, 0]} name="Facility Events" />
+                <Bar dataKey="count" fill="#00a3e0" radius={[0, 2, 2, 0]} name="Facility Events" />
               </BarChart>
             </ResponsiveContainer>
           </div>

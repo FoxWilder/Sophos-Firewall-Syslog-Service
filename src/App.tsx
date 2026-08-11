@@ -246,17 +246,18 @@ export default function App() {
 
   const handleResetDefaults = () => {
     setSettings(defaultSettings);
-    setEvents(initialEvents);
+    setEvents([]);
     setPresets(defaultFilterPresets);
+    localStorage.removeItem("syslog_receiver_events");
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0c] text-[#d1d1d1] font-mono text-[11px] selection:bg-emerald-500/30 selection:text-emerald-200">
+    <main className="min-h-screen bg-[#07111e] text-[#a2bdde] font-mono text-[11px] selection:bg-[#0066cc]/30 selection:text-white">
       {/* Subtle background dark grid line pattern */}
       <div 
-        className="pointer-events-none fixed inset-0 opacity-[0.2]" 
+        className="pointer-events-none fixed inset-0 opacity-[0.15]" 
         style={{ 
-          backgroundImage: "radial-gradient(#2a2a2a 1px, transparent 1px)", 
+          backgroundImage: "radial-gradient(#1f3354 1px, transparent 1px)", 
           backgroundSize: "16px 16px" 
         }} 
       />
