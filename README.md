@@ -11,6 +11,7 @@ A high-performance real-time Sophos SFOS Syslog Receiver, Log Parser, and Securi
 
 ## 🌟 Key Features
 
+- 📈 **Extended User Activity & Connection Duration Reporting (`REPORTING`)**: Analyze user browsing history, application usage, active connection durations (e.g. 2h 15m on YouTube, 3h 30m on M365), bandwidth consumption (MB/GB), policy compliance (allowed vs blocked attempts), and custom timeframe filtering (Today, Past 24h, Last 7/30 days, Custom Date Range).
 - 🧠 **Sophos SFOS v22.0 Human Log Translator (`HUMAN_LOGS`)**: Translates verbose Sophos key-value syslog events into plain-English security narratives, color-coded status badges, Sophos policy explanations, traffic details, and recommended administrator actions based on official [Sophos Firewall 22.0 Syslog Documentation](https://docs.sophos.com/nsg/sophos-firewall/22.0/syslog/index.html).
 - 🖥️ **Tactical Dark Console UI**: High-density SOC dashboard with monospace typography and low-eyestrain dark palette.
 - ⚡ **Real-Time Log Stream**: Live ingestion stream with play/pause controls, instant buffer flush, and status indicators.
@@ -37,11 +38,13 @@ Sophos-Firewall-Syslog-Service/
 │   │   ├── EventExplorer.tsx     # Full-text search and multi-field log filter
 │   │   ├── Header.tsx            # Navigation header & live status indicators
 │   │   ├── HumanLogsView.tsx     # Human-readable Sophos 22.0 log translator page
+│   │   ├── ReportingView.tsx     # Extended user web/app activity & duration report
 │   │   ├── SettingsView.tsx      # Receiver listener settings & alert rules
 │   │   ├── SetupGuideView.tsx    # Windows Server & SFOS deployment guide
 │   │   └── SyslogInjectorModal.tsx# Test packet generator modal
 │   ├── data/
-│   │   └── mockEvents.ts         # Sample SFOS log stream generator
+│   │   ├── mockEvents.ts         # Sample SFOS log stream generator
+│   │   └── mockReportingData.ts  # Pre-loaded user web sessions dataset
 │   ├── lib/
 │   │   └── sophosParser.ts       # Sophos SFOS 22.0 log ID decoder & narrative translator
 │   ├── App.tsx                   # Main state container & view router

@@ -16,6 +16,7 @@ import { Header, NavTab } from "./components/Header";
 import { DashboardView } from "./components/DashboardView";
 import { HumanLogsView } from "./components/HumanLogsView";
 import { EventExplorer } from "./components/EventExplorer";
+import { ReportingView } from "./components/ReportingView";
 import { AnalyticsView } from "./components/AnalyticsView";
 import { SettingsView } from "./components/SettingsView";
 import { SetupGuideView } from "./components/SetupGuideView";
@@ -321,6 +322,13 @@ export default function App() {
             onSelectEvent={setSelectedEvent}
             onClearLogs={handleClearLogs}
             onSavePreset={handleSavePreset}
+          />
+        )}
+
+        {activeTab === "reporting" && (
+          <ReportingView
+            events={events}
+            onSelectEvent={setSelectedEvent}
           />
         )}
 

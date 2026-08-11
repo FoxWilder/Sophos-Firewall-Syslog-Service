@@ -78,6 +78,36 @@ export interface ReceiverSettings {
   alertSeverityThreshold: Severity;
 }
 
+export interface UserWebSession {
+  id: string;
+  user: string;
+  userEmail?: string;
+  department: string;
+  siteOrApp: string;
+  domain: string;
+  category: "Cloud SaaS" | "Web Browsing" | "Media & Streaming" | "Social Media" | "Collaboration" | "Developer & IT" | "AI & LLMs" | "Restricted / Threat";
+  startTime: string; // ISO String
+  endTime: string;   // ISO String
+  durationSeconds: number;
+  bytesSent: number;
+  bytesReceived: number;
+  status: "Allowed" | "Blocked" | "Warned";
+  fwRuleId: string;
+  clientIp: string;
+  deviceHost: string;
+}
+
+export interface ReportFilterState {
+  user: string;
+  department: string;
+  category: string;
+  timeSpan: "today" | "24h" | "7d" | "30d" | "custom";
+  customStartDate?: string;
+  customEndDate?: string;
+  status: "all" | "Allowed" | "Blocked";
+  searchQuery: string;
+}
+
 export interface AlertRule {
   id: string;
   name: string;
