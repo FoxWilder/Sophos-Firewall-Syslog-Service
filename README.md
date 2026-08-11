@@ -132,11 +132,24 @@ python syslog-server/send-test-syslog.py --host 127.0.0.1 --port 5514 --protocol
 
 ---
 
-## 🌐 Live Web Preview
+## 🌐 Live Web Preview & GitHub Pages Setup
 
-The Web Preview is automatically built and deployed via GitHub Pages workflow on every push to `main` or `v*` tag releases:
+The Web Preview is automatically built and deployed via the GitHub Pages workflow (`.github/workflows/deploy.yml`) on every push to `main` or release tag.
 
 👉 **[Launch Live Web Preview](https://FoxWilder.github.io/Sophos-Firewall-Syslog-Service/)**
+
+### ⚙️ How to Configure GitHub Pages in Your Repository:
+
+If GitHub Pages is not rendering or returns a 404 on your repository:
+
+1. **Set Source to GitHub Actions**:
+   - Go to your GitHub repository -> **Settings** -> **Pages** (under *Code and automation*).
+   - Under **Build and deployment** -> **Source**, select **"GitHub Actions"** from the drop-down menu.
+2. **Grant Workflow Permissions**:
+   - Go to **Settings** -> **Actions** -> **General**.
+   - Scroll to **Workflow permissions** and select **"Read and write permissions"**, then click **Save**.
+3. **Re-run Deployment**:
+   - Go to the **Actions** tab, select **"Build and Deploy GitHub Pages Web Preview"**, and click **Re-run all jobs** (or push a commit to `main`).
 
 ---
 
