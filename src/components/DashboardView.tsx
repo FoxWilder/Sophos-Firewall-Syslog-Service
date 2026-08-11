@@ -325,9 +325,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#1a1a1c]">
-                {filteredEvents.map((event) => (
+                {filteredEvents.map((event, idx) => (
                   <tr
-                    key={event.id}
+                    key={`${event.id}-${idx}`}
                     onClick={() => onSelectEvent(event)}
                     className="hover:bg-[#16161a] even:bg-[#121214] cursor-pointer group text-[11px]"
                   >

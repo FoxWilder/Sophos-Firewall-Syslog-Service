@@ -452,8 +452,10 @@ export function generateRandomEvent(idCounter: number): SyslogEvent {
   const dstPort = [80, 443, 53, 4444, 8443, 22, 500][Math.floor(Math.random() * 7)];
   const logId = `010${Math.floor(Math.random() * 8 + 1)}0${Math.floor(Math.random() * 900000 + 100000)}`;
 
+  const uniqueSuffix = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Math.random().toString(36).substring(2, 8);
+
   return {
-    id: `evt-${Date.now()}-${idCounter}`,
+    id: `evt-${Date.now()}-${idCounter}-${uniqueSuffix}`,
     time: timeStr,
     isoTimestamp: isoStr,
     host,

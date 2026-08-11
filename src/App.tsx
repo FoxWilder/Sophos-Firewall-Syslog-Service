@@ -36,11 +36,17 @@ export default function App() {
     }
   });
 
-  // Events stream persistence
+  // Events stream persistence with strict ID deduplication
   const [events, setEvents] = useState<SyslogEvent[]>(() => {
     try {
       const saved = localStorage.getItem("syslog_receiver_events");
-      return saved ? JSON.parse(saved) : initialEvents;
+      const list: SyslogEvent[] = saved ? JSON.parse(saved) : initialEvents;
+      const seen = new Set<string>();
+      return list.filter((evt) => {
+        if (!evt.id || seen.has(evt.id)) return false;
+        seen.add(evt.id);
+        return true;
+      });
     } catch {
       return initialEvents;
     }
@@ -104,7 +110,25 @@ export default function App() {
 
   // Handle live incoming stream event
   const addSyslogEvent = useCallback((newEvent: SyslogEvent) => {
-    setEvents((prev) => [newEvent, ...prev.slice(0, 499)]); // Keep buffer up to 500 events
+    setEvents((prev) => {
+      let eventToAdd = newEvent;
+      if (prev.some((e) => e.id === eventToAdd.id)) {
+        eventToAdd = {
+          ...eventToAdd,
+          id: `${eventToAdd.id}-${Math.random().toString(36).substring(2, 7)}`,
+        };
+      }
+      const combined = [eventToAdd, ...prev];
+      const seen = new Set<string>();
+      const deduplicated: SyslogEvent[] = [];
+      for (const evt of combined) {
+        if (!seen.has(evt.id)) {
+          seen.add(evt.id);
+          deduplicated.push(evt);
+        }
+      }
+      return deduplicated.slice(0, 500);
+    });
     
     // Check for critical alert toast notification
     if (newEvent.severity === "Critical" || newEvent.severity === "Error") {

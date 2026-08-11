@@ -435,9 +435,9 @@ export const EventExplorer: React.FC<EventExplorerProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1a1a1c]">
-              {paginatedEvents.map((event) => (
+              {paginatedEvents.map((event, idx) => (
                 <tr
-                  key={event.id}
+                  key={`${event.id}-${idx}`}
                   onClick={() => onSelectEvent(event)}
                   className="hover:bg-[#16161a] even:bg-[#121214] cursor-pointer group text-[11px]"
                 >
